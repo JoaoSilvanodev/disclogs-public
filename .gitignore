@@ -1,0 +1,25 @@
+# Android Studio / IntelliJ
+*.iml
+.gradle
+/.idea/
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Firebase
+firebase-key.json
+
+# Node / Supabase
+node_modules/
+.temp/
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# User specific
+*.hprof
+.kotlin
+.vscode

@@ -1,0 +1,130 @@
+[
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_album1.jpeg.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/album1.jpeg"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_medium.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_medium.ttf"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_light.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_light.ttf"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_ic_spotify.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/ic_spotify.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-xxxhdpi_ic_icon.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-xxxhdpi/ic_icon.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_regular.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_regular.ttf"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_semibold.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_semibold.ttf"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_home_bg.png.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/home_bg.png"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_gemini_svg__1_.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/gemini_svg__1_.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/xml_backup_rules.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-xxxhdpi_ic_icon_round.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-xxxhdpi/ic_icon_round.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_bg_home.png.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/bg_home.png"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_ic_icon_foreground.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/ic_icon_foreground.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_bg_2.jpeg.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/bg_2.jpeg"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-xxhdpi_ic_icon_round.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-xxhdpi/ic_icon_round.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-anydpi-v26_ic_icon_round.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-anydpi-v26/ic_icon_round.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_extrabold.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_extrabold.ttf"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-hdpi_ic_icon.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-hdpi/ic_icon.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-mdpi_ic_icon_round.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-mdpi/ic_icon_round.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_ic_google.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/ic_google.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-mdpi_ic_icon.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-mdpi/ic_icon.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-hdpi_ic_icon_round.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-hdpi/ic_icon_round.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-xxhdpi_ic_icon.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-xxhdpi/ic_icon.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/drawable_profile.png.flat",
+        "source": "com.clogs.disclogs.app-main-65:/drawable/profile.png"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/xml_data_extraction_rules.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_bold.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_bold.ttf"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-xhdpi_ic_icon.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-xhdpi/ic_icon.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-xhdpi_ic_icon_round.webp.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-xhdpi/ic_icon_round.webp"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/mipmap-anydpi-v26_ic_icon.xml.flat",
+        "source": "com.clogs.disclogs.app-main-65:/mipmap-anydpi-v26/ic_icon.xml"
+    },
+    {
+        "merged": "com.clogs.disclogs.app-debug-63:/font_manrope_extralight.ttf.flat",
+        "source": "com.clogs.disclogs.app-main-65:/font/manrope_extralight.ttf"
+    }
+]

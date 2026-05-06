@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.clogs.disclogs.app-mergeDebugResources-61:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/home/joaopedro/.gradle/caches/9.4.1/transforms/fe5c83a80d7bafcbc6f1cca4ba11b9d9/transformed/core-splashscreen-1.2.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "195"
+                    }
+                }
+            ]
+        }
+    ]
+}

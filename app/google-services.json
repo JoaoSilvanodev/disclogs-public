@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "437844326941",
+    "project_id": "disc-b2c12",
+    "storage_bucket": "disc-b2c12.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437844326941:android:df2662305e9aaccf7864f4",
+        "android_client_info": {
+          "package_name": "com.clogs.disclogs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8iHJ4PnB8sLuMu3M9n55w7PqY8Dmu9QQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Disclogs</string>
+    <string name="search_screen">BUSCA</string>
+    <string name="search_placeholder">Busque albuns, artistas ou singles</string>
+
+    <string name="filter_album">Álbum</string>
+    <string name="filter_artist">Artista</string>
+    <string name="filter_single">Single</string>
+
+    <string name="title_recent_searches">BUSCAS RECENTES</string>
+    <string name="title_search_results">Resultado</string>
+
+    <string name="error_message">Erro: %1$s</string>
+
+    <string name="cd_back_button">Voltar</string>
+    <string name="cd_clear_search">Limpar busca</string>
+
+    <string name="cancel">Cancelar</string>
+    <string name="save">Salvar</string>
+
+    <string name="select_your_top_4">FAVORITOS</string>
+    <string name="search_albums_placeholder">Buscar álbuns...</string>
+    <string name="settings_description">Abrir configurações</string>
+    <string name="profile_title">PERFIL</string>
+
+    <string name="profile_collector_label">PERFIL DO COLECIONADOR</string>
+    <string name="profile_albums_count">ÁLBUNS</string>
+    <string name="profile_followers_count">SEGUIDORES</string>
+    <string name="profile_appraisal_label">AVALIAÇÃO</string>
+    <string name="profile_curated_section">CURADORIA</string>
+    <string name="profile_favorites">FAVORITOS</string>
+    <string name="profile_view_all">VER TUDO</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Configurações</string>
+    <string name="settings_subtitle">Gerencie sua conta e preferências</string>
+
+    <string name="settings_section_profile">PERFIL</string>
+    <string name="settings_fav_albums_title">ÁLBUNS FAVORITOS</string>
+    <string name="settings_fav_albums_subtitle">Escolha seu top 4 favoritos</string>
+    <string name="settings_edit_profile_title">EDITAR PERFIL</string>
+    <string name="settings_edit_profile_subtitle">Altere seu nome, bio, foto de perfil...</string>
+
+    <string name="settings_section_account">CONTA</string>
+    <string name="settings_email_title">E-MAIL</string>
+    <string name="settings_email_subtitle">Altere seu e-mail</string>
+    <string name="settings_password_title">SENHA</string>
+    <string name="settings_password_subtitle">Altere sua senha</string>
+    <string name="settings_social_links_title">LINKS SOCIAIS</string>
+    <string name="settings_social_links_subtitle">Spotify, Apple Music...</string>
+
+    <string name="settings_section_notifications">NOTIFICAÇÕES</string>
+    <string name="settings_push_notifications_title">Notificações Push</string>
+    <string name="settings_push_notifications_subtitle">Atividades, menções e novos lançamentos</string>
+    <string name="settings_email_digest_title">Resumo por E-mail</string>
+    <string name="settings_email_digest_subtitle">Resumo semanal do valor da coleção</string>
+
+    <string name="settings_section_appearance">APARÊNCIA</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_theme_subtitle">Obsidian Wine (Escuro Personalizado)</string>
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_language_subtitle">Português (Brasil)</string>
+
+    <string name="settings_section_privacy">PRIVACIDADE E SEGURANÇA</string>
+    <string name="settings_visibility_title">Visibilidade do Perfil</string>
+    <string name="settings_visibility_subtitle">Público</string>
+    <string name="settings_blocked_users_title">Usuários Bloqueados</string>
+    <string name="settings_blocked_users_subtitle">0 contas</string>
+
+    <string name="settings_section_about">SOBRE</string>
+    <string name="settings_version_title">Versão</string>
+    <string name="settings_terms_title">Termos de Serviço</string>
+    <string name="settings_terms_subtitle">Leia nossos termos e condições</string>
+
+    <string name="settings_logout">SAIR DA CONTA</string>
+    <string name="settings_logout_description">Sair</string>
+    <string name="trendingSection">EM ALTA</string>
+    <string name="diary">Diário</string>
+    <string name="tracks">FAIXAS</string>
+
+    <!-- Home Screen -->
+    <string name="home_view_all">VER TUDO</string>
+    <string name="home_no_trending">Nenhum álbum em alta no momento</string>
+    <string name="home_friends_listening">AMIGOS OUVINDO</string>
+    <string name="home_community_activity">ATIVIDADE DA COMUNIDADE</string>
+    <string name="home_your_collection">SUA COLEÇÃO</string>
+    <string name="home_this_week">+%1$d ESSA SEMANA</string>
+    <string name="home_collector_tip">DICA DO COLECIONADOR</string>
+    <string name="home_reviewed_album">Nota: </string>
+    <string name="NotFoundUser">Usuário não encontrado</string>
+    <string name="filter_user">Usuários</string>
+    <string name="all_albums">Todos os álbuns</string>
+    <string name="profile_follows">SEGUINDO</string>
+
+</resources>
