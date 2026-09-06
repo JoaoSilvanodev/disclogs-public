@@ -10,7 +10,7 @@ interface AlbumRepository {
     fun getCurrentUserId(): String?
 
     // Busca álbuns pelo nome retornando uma lista de álbuns
-    suspend fun searchAlbums(query: String, tipo: String = "album"): Result<List<Album>>
+    suspend fun searchAlbums(query: String, tipo: String): Result<List<Album>>
 
     suspend fun saveUserReview(review: Review): Result<Unit>
 

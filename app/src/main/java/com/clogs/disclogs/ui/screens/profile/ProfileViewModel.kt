@@ -19,10 +19,10 @@ data class ProfileUiState(
     val errorMessage: String? = null,
     val albumCount: Int = 0,
     val followersCount: Int = 0,
+    val followingCount: Int = 0,
     val isCurrentUser: Boolean = true,
     val isFollowing: Boolean = false
-
-)
+    )
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -51,13 +51,18 @@ class ProfileViewModel @Inject constructor(
             profileResult.onSuccess { profile ->
                 val totReviews = reviewsCountResult.getOrDefault(0)
 
+                val followers = repository.getFollowersCount(profile?.id ?: "" ).getOrDefault(0)
+                val following = repository.getFollowingCount(profile?.id ?: "").getOrDefault(0)
+
                 if  (!isMe) {
-                    val followStatus = repository.checkIfFollowing(profile.id).getOrDefault(false)
+                    val followStatus = repository.checkIfFollowing(profile?.id ?: "").getOrDefault(false)
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             profile = profile,
                             albumCount = totReviews,
+                            followersCount = followers,
+                            followingCount = following,
                             isCurrentUser = false,
                             isFollowing = followStatus
                         )
@@ -67,6 +72,8 @@ class ProfileViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             profile = profile,
+                            followersCount = followers,
+                            followingCount = following,
                             albumCount = totReviews,
                             isCurrentUser = true
                         )
@@ -100,7 +107,8 @@ class ProfileViewModel @Inject constructor(
 
             result.onSuccess {
                 println("DISCLOGS DEBUG: 5. SUCESSO no banco! Atualizando a tela.")
-                _uiState.update { it.copy(isFollowing = !currentlyFollowing) }
+                _uiState.update { it.copy(isFollowing = !currentlyFollowing,
+                    followersCount = if (currentlyFollowing) it.followersCount - 1 else it.followersCount + 1) }
             }.onFailure { erro ->
                 println("DISCLOGS DEBUG: 5. FALHA CRÍTICA no banco: ${erro.message}")
             }

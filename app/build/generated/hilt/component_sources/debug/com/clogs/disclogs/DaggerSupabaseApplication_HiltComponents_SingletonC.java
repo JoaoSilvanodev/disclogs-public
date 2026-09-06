@@ -6,17 +6,24 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
-import com.clogs.disclogs.data.remote.SupabaseDataSource;
+import com.clogs.disclogs.data.remote.FirebaseDataSource;
+import com.clogs.disclogs.data.remote.discogs.DiscogsRemoteDataSource;
+import com.clogs.disclogs.data.remote.lastfm.LastfmRemoteDataSource;
 import com.clogs.disclogs.data.remote.spotify.SpotifyRemoteDataSource;
 import com.clogs.disclogs.data.repository.AlbumRepository;
 import com.clogs.disclogs.data.repository.AuthRepository;
+import com.clogs.disclogs.data.repository.ListRepository;
 import com.clogs.disclogs.data.repository.ProfileRepository;
 import com.clogs.disclogs.di.AppModule_ProvideAlbumRepositoryFactory;
 import com.clogs.disclogs.di.AppModule_ProvideAuthRepositoryFactory;
+import com.clogs.disclogs.di.AppModule_ProvideDiscogsDataSourceFactory;
+import com.clogs.disclogs.di.AppModule_ProvideFirebaseAuthFactory;
+import com.clogs.disclogs.di.AppModule_ProvideFirebaseDataSourceFactory;
+import com.clogs.disclogs.di.AppModule_ProvideFirebaseFirestoreFactory;
+import com.clogs.disclogs.di.AppModule_ProvideLastFmDataSourceFactory;
+import com.clogs.disclogs.di.AppModule_ProvideListRepositoryFactory;
 import com.clogs.disclogs.di.AppModule_ProvideProfileRepositoryFactory;
 import com.clogs.disclogs.di.AppModule_ProvideSpotifyDataSourceFactory;
-import com.clogs.disclogs.di.AppModule_ProvideSupabaseClientFactory;
-import com.clogs.disclogs.di.AppModule_ProvideSupabaseDataSourceFactory;
 import com.clogs.disclogs.ui.screens.auth.AuthViewModel;
 import com.clogs.disclogs.ui.screens.auth.AuthViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.auth.AuthViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
@@ -37,6 +44,10 @@ import com.clogs.disclogs.ui.screens.library.LibraryViewModel;
 import com.clogs.disclogs.ui.screens.library.LibraryViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.library.LibraryViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.clogs.disclogs.ui.screens.library.LibraryViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.clogs.disclogs.ui.screens.library.list.ListViewModel;
+import com.clogs.disclogs.ui.screens.library.list.ListViewModel_HiltModules;
+import com.clogs.disclogs.ui.screens.library.list.ListViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.clogs.disclogs.ui.screens.library.list.ListViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
 import com.clogs.disclogs.ui.screens.profile.ProfileViewModel;
 import com.clogs.disclogs.ui.screens.profile.ProfileViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.profile.ProfileViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
@@ -49,7 +60,11 @@ import com.clogs.disclogs.ui.screens.settings.SettingsViewModel;
 import com.clogs.disclogs.ui.screens.settings.SettingsViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.settings.SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.clogs.disclogs.ui.screens.settings.SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -67,11 +82,8 @@ import dagger.hilt.android.internal.modules.ApplicationContextModule;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
 import dagger.internal.LazyClassKeyMap;
-import dagger.internal.MapBuilder;
 import dagger.internal.Preconditions;
 import dagger.internal.Provider;
-import io.github.jan.supabase.SupabaseClient;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
@@ -399,13 +411,14 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     }
 
-    Map keySetMapOfClassOfAndBooleanBuilder() {
-      MapBuilder mapBuilder = MapBuilder.<String, Boolean>newMapBuilder(8);
+    ImmutableMap keySetMapOfClassOfObjectAndBooleanBuilder() {
+      ImmutableMap.Builder mapBuilder = ImmutableMap.<String, Boolean>builderWithExpectedSize(9);
       mapBuilder.put(AlbumDetailViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, AlbumDetailViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(ArtistViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ArtistViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(AuthViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, AuthViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(HomeViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HomeViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(LibraryViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, LibraryViewModel_HiltModules.KeyModule.provide());
+      mapBuilder.put(ListViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ListViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(ProfileViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ProfileViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(SearchViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, SearchViewModel_HiltModules.KeyModule.provide());
       mapBuilder.put(SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, SettingsViewModel_HiltModules.KeyModule.provide());
@@ -424,7 +437,7 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(keySetMapOfClassOfAndBooleanBuilder());
+      return LazyClassKeyMap.<Boolean>of(keySetMapOfClassOfObjectAndBooleanBuilder());
     }
 
     @Override
@@ -444,7 +457,6 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     @CanIgnoreReturnValue
     private MainActivity injectMainActivity2(MainActivity instance) {
-      MainActivity_MembersInjector.injectSupabaseClient(instance, singletonCImpl.provideSupabaseClientProvider.get());
       MainActivity_MembersInjector.injectProfileRepository(instance, singletonCImpl.provideProfileRepositoryProvider.get());
       return instance;
     }
@@ -467,6 +479,8 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     Provider<LibraryViewModel> libraryViewModelProvider;
 
+    Provider<ListViewModel> listViewModelProvider;
+
     Provider<ProfileViewModel> profileViewModelProvider;
 
     Provider<SearchViewModel> searchViewModelProvider;
@@ -482,13 +496,14 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     }
 
-    Map hiltViewModelMapMapOfClassOfAndProviderOfViewModelBuilder() {
-      MapBuilder mapBuilder = MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(8);
+    ImmutableMap hiltViewModelMapMapOfClassOfObjectAndProviderOfViewModelBuilder() {
+      ImmutableMap.Builder mapBuilder = ImmutableMap.<String, javax.inject.Provider<ViewModel>>builderWithExpectedSize(9);
       mapBuilder.put(AlbumDetailViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (albumDetailViewModelProvider)));
       mapBuilder.put(ArtistViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (artistViewModelProvider)));
       mapBuilder.put(AuthViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (authViewModelProvider)));
       mapBuilder.put(HomeViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (homeViewModelProvider)));
       mapBuilder.put(LibraryViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (libraryViewModelProvider)));
+      mapBuilder.put(ListViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (listViewModelProvider)));
       mapBuilder.put(ProfileViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (profileViewModelProvider)));
       mapBuilder.put(SearchViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (searchViewModelProvider)));
       mapBuilder.put(SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) (settingsViewModelProvider)));
@@ -503,19 +518,20 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
       this.authViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
       this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
       this.libraryViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
-      this.profileViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
-      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
-      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
+      this.listViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
+      this.profileViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
+      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 8);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(hiltViewModelMapMapOfClassOfAndProviderOfViewModelBuilder());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(hiltViewModelMapMapOfClassOfObjectAndProviderOfViewModelBuilder());
     }
 
     @Override
     public Map<Class<?>, Object> getHiltViewModelAssistedMap() {
-      return Collections.<Class<?>, Object>emptyMap();
+      return ImmutableMap.<Class<?>, Object>of();
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -546,22 +562,25 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
           return (T) new ArtistViewModel(singletonCImpl.provideAlbumRepositoryProvider.get());
 
           case 2: // com.clogs.disclogs.ui.screens.auth.AuthViewModel
-          return (T) new AuthViewModel(singletonCImpl.provideAuthRepositoryProvider.get(), singletonCImpl.provideSupabaseClientProvider.get());
+          return (T) new AuthViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
 
           case 3: // com.clogs.disclogs.ui.screens.home.HomeViewModel
           return (T) new HomeViewModel(singletonCImpl.provideAlbumRepositoryProvider.get(), singletonCImpl.provideProfileRepositoryProvider.get());
 
           case 4: // com.clogs.disclogs.ui.screens.library.LibraryViewModel
-          return (T) new LibraryViewModel(singletonCImpl.provideAlbumRepositoryProvider.get());
+          return (T) new LibraryViewModel(singletonCImpl.provideAlbumRepositoryProvider.get(), singletonCImpl.provideListRepositoryProvider.get());
 
-          case 5: // com.clogs.disclogs.ui.screens.profile.ProfileViewModel
+          case 5: // com.clogs.disclogs.ui.screens.library.list.ListViewModel
+          return (T) new ListViewModel(singletonCImpl.provideListRepositoryProvider.get());
+
+          case 6: // com.clogs.disclogs.ui.screens.profile.ProfileViewModel
           return (T) new ProfileViewModel(singletonCImpl.provideProfileRepositoryProvider.get());
 
-          case 6: // com.clogs.disclogs.ui.screens.search.SearchViewModel
+          case 7: // com.clogs.disclogs.ui.screens.search.SearchViewModel
           return (T) new SearchViewModel(singletonCImpl.provideAlbumRepositoryProvider.get(), singletonCImpl.provideProfileRepositoryProvider.get());
 
-          case 7: // com.clogs.disclogs.ui.screens.settings.SettingsViewModel
-          return (T) new SettingsViewModel(singletonCImpl.provideProfileRepositoryProvider.get(), singletonCImpl.provideAlbumRepositoryProvider.get());
+          case 8: // com.clogs.disclogs.ui.screens.settings.SettingsViewModel
+          return (T) new SettingsViewModel(singletonCImpl.provideProfileRepositoryProvider.get(), singletonCImpl.provideAlbumRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -641,17 +660,25 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
   private static final class SingletonCImpl extends SupabaseApplication_HiltComponents.SingletonC {
     private final SingletonCImpl singletonCImpl = this;
 
-    Provider<SupabaseClient> provideSupabaseClientProvider;
+    Provider<FirebaseAuth> provideFirebaseAuthProvider;
+
+    Provider<FirebaseFirestore> provideFirebaseFirestoreProvider;
+
+    Provider<FirebaseDataSource> provideFirebaseDataSourceProvider;
 
     Provider<ProfileRepository> provideProfileRepositoryProvider;
 
     Provider<SpotifyRemoteDataSource> provideSpotifyDataSourceProvider;
 
-    Provider<SupabaseDataSource> provideSupabaseDataSourceProvider;
+    Provider<LastfmRemoteDataSource> provideLastFmDataSourceProvider;
+
+    Provider<DiscogsRemoteDataSource> provideDiscogsDataSourceProvider;
 
     Provider<AlbumRepository> provideAlbumRepositoryProvider;
 
     Provider<AuthRepository> provideAuthRepositoryProvider;
+
+    Provider<ListRepository> provideListRepositoryProvider;
 
     SingletonCImpl() {
 
@@ -661,12 +688,16 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     @SuppressWarnings("unchecked")
     private void initialize() {
-      this.provideSupabaseClientProvider = DoubleCheck.provider(new SwitchingProvider<SupabaseClient>(singletonCImpl, 0));
-      this.provideProfileRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ProfileRepository>(singletonCImpl, 1));
-      this.provideSpotifyDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<SpotifyRemoteDataSource>(singletonCImpl, 3));
-      this.provideSupabaseDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<SupabaseDataSource>(singletonCImpl, 4));
-      this.provideAlbumRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AlbumRepository>(singletonCImpl, 2));
-      this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 5));
+      this.provideFirebaseAuthProvider = DoubleCheck.provider(new SwitchingProvider<FirebaseAuth>(singletonCImpl, 2));
+      this.provideFirebaseFirestoreProvider = DoubleCheck.provider(new SwitchingProvider<FirebaseFirestore>(singletonCImpl, 3));
+      this.provideFirebaseDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<FirebaseDataSource>(singletonCImpl, 1));
+      this.provideProfileRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ProfileRepository>(singletonCImpl, 0));
+      this.provideSpotifyDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<SpotifyRemoteDataSource>(singletonCImpl, 5));
+      this.provideLastFmDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<LastfmRemoteDataSource>(singletonCImpl, 6));
+      this.provideDiscogsDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<DiscogsRemoteDataSource>(singletonCImpl, 7));
+      this.provideAlbumRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AlbumRepository>(singletonCImpl, 4));
+      this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 8));
+      this.provideListRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ListRepository>(singletonCImpl, 9));
     }
 
     @Override
@@ -675,7 +706,7 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
 
     @Override
     public Set<Boolean> getDisableFragmentGetContextFix() {
-      return Collections.<Boolean>emptySet();
+      return ImmutableSet.<Boolean>of();
     }
 
     @Override
@@ -702,23 +733,35 @@ public final class DaggerSupabaseApplication_HiltComponents_SingletonC {
       @SuppressWarnings("unchecked")
       public T get() {
         switch (id) {
-          case 0: // io.github.jan.supabase.SupabaseClient
-          return (T) AppModule_ProvideSupabaseClientFactory.provideSupabaseClient();
+          case 0: // com.clogs.disclogs.data.repository.ProfileRepository
+          return (T) AppModule_ProvideProfileRepositoryFactory.provideProfileRepository(singletonCImpl.provideFirebaseDataSourceProvider.get());
 
-          case 1: // com.clogs.disclogs.data.repository.ProfileRepository
-          return (T) AppModule_ProvideProfileRepositoryFactory.provideProfileRepository(singletonCImpl.provideSupabaseClientProvider.get());
+          case 1: // com.clogs.disclogs.data.remote.FirebaseDataSource
+          return (T) AppModule_ProvideFirebaseDataSourceFactory.provideFirebaseDataSource(singletonCImpl.provideFirebaseAuthProvider.get(), singletonCImpl.provideFirebaseFirestoreProvider.get());
 
-          case 2: // com.clogs.disclogs.data.repository.AlbumRepository
-          return (T) AppModule_ProvideAlbumRepositoryFactory.provideAlbumRepository(singletonCImpl.provideSpotifyDataSourceProvider.get(), singletonCImpl.provideSupabaseDataSourceProvider.get(), singletonCImpl.provideSupabaseClientProvider.get());
+          case 2: // com.google.firebase.auth.FirebaseAuth
+          return (T) AppModule_ProvideFirebaseAuthFactory.provideFirebaseAuth();
 
-          case 3: // com.clogs.disclogs.data.remote.spotify.SpotifyRemoteDataSource
+          case 3: // com.google.firebase.firestore.FirebaseFirestore
+          return (T) AppModule_ProvideFirebaseFirestoreFactory.provideFirebaseFirestore();
+
+          case 4: // com.clogs.disclogs.data.repository.AlbumRepository
+          return (T) AppModule_ProvideAlbumRepositoryFactory.provideAlbumRepository(singletonCImpl.provideSpotifyDataSourceProvider.get(), singletonCImpl.provideFirebaseDataSourceProvider.get(), singletonCImpl.provideLastFmDataSourceProvider.get(), singletonCImpl.provideDiscogsDataSourceProvider.get());
+
+          case 5: // com.clogs.disclogs.data.remote.spotify.SpotifyRemoteDataSource
           return (T) AppModule_ProvideSpotifyDataSourceFactory.provideSpotifyDataSource();
 
-          case 4: // com.clogs.disclogs.data.remote.SupabaseDataSource
-          return (T) AppModule_ProvideSupabaseDataSourceFactory.provideSupabaseDataSource(singletonCImpl.provideSupabaseClientProvider.get());
+          case 6: // com.clogs.disclogs.data.remote.lastfm.LastfmRemoteDataSource
+          return (T) AppModule_ProvideLastFmDataSourceFactory.provideLastFmDataSource();
 
-          case 5: // com.clogs.disclogs.data.repository.AuthRepository
-          return (T) AppModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideSupabaseClientProvider.get());
+          case 7: // com.clogs.disclogs.data.remote.discogs.DiscogsRemoteDataSource
+          return (T) AppModule_ProvideDiscogsDataSourceFactory.provideDiscogsDataSource();
+
+          case 8: // com.clogs.disclogs.data.repository.AuthRepository
+          return (T) AppModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideFirebaseDataSourceProvider.get());
+
+          case 9: // com.clogs.disclogs.data.repository.ListRepository
+          return (T) AppModule_ProvideListRepositoryFactory.provideListRepository(singletonCImpl.provideFirebaseDataSourceProvider.get(), singletonCImpl.provideSpotifyDataSourceProvider.get());
 
           default: throw new AssertionError(id);
         }

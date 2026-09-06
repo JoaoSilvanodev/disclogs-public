@@ -29,12 +29,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clogs.disclogs.R
 import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.ui.theme.DisclogsTheme
 
@@ -74,9 +76,9 @@ fun ArtistScreenContent(
 
     var filterMenuExpanded by remember { mutableStateOf(false) }
     val currentFilterLabel = when (state.currentSort) {
-        SortOrder.NEWEST_FIRST -> "Recentes"
-        SortOrder.OLDEST_FIRST -> "Antigos"
-        SortOrder.ALPHABETICAL -> "Alfabética"
+        SortOrder.NEWEST_FIRST -> stringResource(R.string.sort_recent)
+        SortOrder.OLDEST_FIRST -> stringResource(R.string.sort_oldest)
+        SortOrder.ALPHABETICAL -> stringResource(R.string.sort_alphabetical)
     }
 
     Scaffold(
@@ -90,7 +92,7 @@ fun ArtistScreenContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.cd_back_button)
                         )
                     }
                 })
@@ -113,7 +115,7 @@ fun ArtistScreenContent(
                 ) {
                     AsyncImage(
                         model = state.artistImageUrl,
-                        contentDescription = "Foto de ${state.artistName}",
+                        contentDescription = stringResource(R.string.cd_artist_photo, state.artistName),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -187,7 +189,7 @@ fun ArtistScreenContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "READ FULL BIO",
+                        text = stringResource(R.string.artist_read_full_bio),
                         color = MaterialTheme.colorScheme.error,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -200,22 +202,22 @@ fun ArtistScreenContent(
                         FilterChip(
                             selected = state.currentFilter == ReleaseFilter.ALL,
                             onClick = { onFilterClick(ReleaseFilter.ALL) },
-                            label = { Text("ALL") })
+                            label = { Text(stringResource(R.string.artist_all)) })
                         FilterChip(
                             selected = state.currentFilter == ReleaseFilter.ALBUM,
                             onClick = { onFilterClick(ReleaseFilter.ALBUM) },
-                            label = { Text("ALBUMS") })
+                            label = { Text(stringResource(R.string.artist_albums)) })
                         FilterChip(
                             selected = state.currentFilter == ReleaseFilter.SINGLE,
                             onClick = { onFilterClick(ReleaseFilter.SINGLE) },
-                            label = { Text("SINGLES") })
+                            label = { Text(stringResource(R.string.artist_singles)) })
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(
-                            text = "Top Albums",
+                            text = stringResource(R.string.artist_top_albums),
                             color = MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
@@ -294,7 +296,7 @@ fun ArtistScreenContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Discografia",
+                        text = stringResource(R.string.artist_discography),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
@@ -309,7 +311,7 @@ fun ArtistScreenContent(
                                 .padding(horizontal = 16.dp, vertical = 8.dp)) {
                             Icon(
                                 imageVector = Icons.Default.FilterList,
-                                contentDescription = "Ordenar",
+                                contentDescription = stringResource(R.string.cd_sort),
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -328,7 +330,7 @@ fun ArtistScreenContent(
                             ) {
                                 DropdownMenuItem(text = {
                                     Text(
-                                        "Recentes", color = MaterialTheme.colorScheme.onSurface
+                                        stringResource(R.string.sort_recent), color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }, onClick = {
                                     filterMenuExpanded = false
@@ -336,7 +338,7 @@ fun ArtistScreenContent(
                                 })
                                 DropdownMenuItem(text = {
                                     Text(
-                                        "Antigos", color = MaterialTheme.colorScheme.onSurface
+                                        stringResource(R.string.sort_oldest), color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }, onClick = {
                                     filterMenuExpanded = false
@@ -344,7 +346,7 @@ fun ArtistScreenContent(
                                 })
                                 DropdownMenuItem(text = {
                                     Text(
-                                        "Alfabética", color = MaterialTheme.colorScheme.onSurface
+                                        stringResource(R.string.sort_alphabetical), color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }, onClick = {
                                     filterMenuExpanded = false

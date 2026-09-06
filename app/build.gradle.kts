@@ -51,6 +51,21 @@ android {
             "SUPABASE_KEY",
             "\"${localProperties.getProperty("SUPABASE_KEY", "")}\""
         )
+        buildConfigField(
+            "String",
+            "LASTFM_KEY",
+            "\"${localProperties.getProperty("LASTFM_KEY", "")}\""
+        )
+        buildConfigField(
+            "String",
+            "DISCOGS_TOKEN",
+            "\"${localProperties.getProperty("DISCOGS_TOKEN", "")}\""
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_AUTH_ID",
+            "\"${localProperties.getProperty("GOOGLE_AUTH_ID", "")}\""
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,12 +83,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        compose = true
-    }
+    
 }
 
 dependencies {
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -104,7 +118,6 @@ dependencies {
     implementation(libs.retrofit.v290)
     implementation(libs.converter.gson.v290)
     implementation(libs.logging.interceptor)
-    implementation(platform(libs.firebase.bom.v34120))
 
     // Supabase
     implementation(platform(libs.bom))
@@ -117,6 +130,18 @@ dependencies {
     implementation(libs.supabase.gotrue.kt)
     implementation(libs.compose.auth)
     implementation(libs.ktor.client.android.v238)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom.v34180))
+    implementation(libs.google.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    // Google Credential Manager & Auth
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     // hilt
     implementation(libs.hilt.android)

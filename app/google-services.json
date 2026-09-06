@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "437844326941",
-    "project_id": "disc-b2c12",
-    "storage_bucket": "disc-b2c12.firebasestorage.app"
+    "project_number": "893754959503",
+    "project_id": "disclogs-1",
+    "storage_bucket": "disclogs-1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:437844326941:android:df2662305e9aaccf7864f4",
+        "mobilesdk_app_id": "1:893754959503:android:057ec3437d639e9aff72fa",
         "android_client_info": {
           "package_name": "com.clogs.disclogs"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "893754959503-frlk9le5h8avdn79b21k1s9irc318ukk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clogs.disclogs",
+            "certificate_hash": "4a213c6fcdc2a1f35597c1d0306792c3c67847f1"
+          }
+        },
+        {
+          "client_id": "893754959503-0buoss4at67h602ubnntbau31g691e7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyB8iHJ4PnB8sLuMu3M9n55w7PqY8Dmu9QQ"
+          "current_key": "AIzaSyAFuUYtMDQ6JsaLg3Vx_Z_LRBl4XmEbBJI"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893754959503-0buoss4at67h602ubnntbau31g691e7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

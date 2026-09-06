@@ -1,5 +1,6 @@
 package com.clogs.disclogs.data.remote.spotify
 
+import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -57,4 +58,11 @@ interface SpotifyApiService {
         @Query("limit") limit: Int = 10,
         @Query("offset") offset: Int = 0,
     ): SpotifyAlbuns
+
+    // metodo para obter varios albums de uma vez passando varios Id's
+    @GET("v1/albums")
+    suspend fun getManyAlbums(
+        @Header("Authorization") bearerToken: String,
+        @Query("ids") ids: String
+    ): Response<ManyAlbumsResponse>
 }

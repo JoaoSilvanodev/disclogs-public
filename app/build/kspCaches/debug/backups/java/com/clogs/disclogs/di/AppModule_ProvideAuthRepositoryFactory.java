@@ -1,5 +1,6 @@
 package com.clogs.disclogs.di;
 
+import com.clogs.disclogs.data.remote.FirebaseDataSource;
 import com.clogs.disclogs.data.repository.AuthRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -7,7 +8,6 @@ import dagger.internal.Preconditions;
 import dagger.internal.Provider;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
-import io.github.jan.supabase.SupabaseClient;
 import javax.annotation.processing.Generated;
 
 @ScopeMetadata("javax.inject.Singleton")
@@ -27,23 +27,24 @@ import javax.annotation.processing.Generated;
     "nullness:initialization.field.uninitialized"
 })
 public final class AppModule_ProvideAuthRepositoryFactory implements Factory<AuthRepository> {
-  private final Provider<SupabaseClient> supabaseClientProvider;
+  private final Provider<FirebaseDataSource> firebaseDataSourceProvider;
 
-  private AppModule_ProvideAuthRepositoryFactory(Provider<SupabaseClient> supabaseClientProvider) {
-    this.supabaseClientProvider = supabaseClientProvider;
+  private AppModule_ProvideAuthRepositoryFactory(
+      Provider<FirebaseDataSource> firebaseDataSourceProvider) {
+    this.firebaseDataSourceProvider = firebaseDataSourceProvider;
   }
 
   @Override
   public AuthRepository get() {
-    return provideAuthRepository(supabaseClientProvider.get());
+    return provideAuthRepository(firebaseDataSourceProvider.get());
   }
 
   public static AppModule_ProvideAuthRepositoryFactory create(
-      Provider<SupabaseClient> supabaseClientProvider) {
-    return new AppModule_ProvideAuthRepositoryFactory(supabaseClientProvider);
+      Provider<FirebaseDataSource> firebaseDataSourceProvider) {
+    return new AppModule_ProvideAuthRepositoryFactory(firebaseDataSourceProvider);
   }
 
-  public static AuthRepository provideAuthRepository(SupabaseClient supabaseClient) {
-    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideAuthRepository(supabaseClient));
+  public static AuthRepository provideAuthRepository(FirebaseDataSource firebaseDataSource) {
+    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideAuthRepository(firebaseDataSource));
   }
 }

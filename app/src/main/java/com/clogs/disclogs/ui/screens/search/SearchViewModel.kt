@@ -70,7 +70,7 @@ class SearchViewModel @Inject constructor(
             }
         } else {
             // BATE NO SPOTIFY
-            val result = repository.searchAlbums(query)
+            val result = repository.searchAlbums(query, filter)
             result.onSuccess { listaCompleta ->
                 _uiState.update { it.copy(albuns = listaCompleta, isLoading = false) }
             }.onFailure { error ->

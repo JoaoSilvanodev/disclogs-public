@@ -13,5 +13,13 @@ data class Album(
     val averageRating: Double = 0.0,
     val totalRating: Double = 0.0,
     val userRating: Double = 0.0,
-    val type: String = "album"
+    val type: String = "album",
+    val wikiSummary: String? = null,
+    val genres: List<String> = emptyList(),
+    val recordLabel: String? = null,
+    val catalogNumber: String? = null,
+    val physicalFormat: String? = null,
+    val weeklyCount: Int = 0,
+    val totalReviews: Int = 0,
+    val lastReviewedAt: Long = 0
 )

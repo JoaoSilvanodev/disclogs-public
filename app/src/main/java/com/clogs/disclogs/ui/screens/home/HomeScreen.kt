@@ -1,5 +1,6 @@
 package com.clogs.disclogs.ui.screens.home
 
+import android.R.attr.rating
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +50,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.clogs.disclogs.R
 import com.clogs.disclogs.data.model.Album
+import com.clogs.disclogs.data.model.FriendActivity
 import com.clogs.disclogs.ui.components.ActivityItem
+import com.clogs.disclogs.ui.components.StarRating
 import com.clogs.disclogs.ui.components.placeholders.AlbumPlaceholder
 import com.clogs.disclogs.ui.theme.DisclogsTheme
 
@@ -74,9 +79,12 @@ fun HomeScreenContent(
     onNavigateToAll: (String) -> Unit
 
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
 
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
@@ -92,7 +100,8 @@ fun HomeScreenContent(
                 colors = topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
-                )
+                ),
+                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
@@ -152,7 +161,7 @@ fun HomeScreenContent(
                         items(state.trendingAlbums) { album ->
                             TrendingAlbumItem(
                                 album = album,
-                                onClick = { onNavigateToDetails(album.id) }
+                                onClick = { onNavigateToDetails(album.id) },
                             )
                         }
                     }
@@ -191,12 +200,22 @@ fun HomeScreenContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(260.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (state.friendAlbum.isEmpty()) {
+                    if (state.isLoading) {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 24.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            userScrollEnabled = true
+                        ) {
+                            items(5) {
+                                AlbumPlaceholder()
+                            }
+                        }
+                    } else if (state.friendListening.isEmpty()) {
                         Text(
-                            text = "Nenhuma atividade de amigos encontrada.",
+                            text = stringResource(R.string.feed_no_activity),
                             color = Color.Gray,
                             fontSize = 12.sp
                         )
@@ -205,118 +224,12 @@ fun HomeScreenContent(
                             contentPadding = PaddingValues(horizontal = 24.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            items(state.friendAlbum) { album ->
-                                TrendingAlbumItem(
-                                    album = album,
-                                    onClick = { onNavigateToDetails(album.id) }
+                            items(state.friendListening) { item ->
+                                FriendListeningItem(
+                                    friendData = item,
+                                    onClick = { onNavigateToDetails(item.album.id) }
                                 )
                             }
-                        }
-                    }
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(48.dp))
-                Text(
-                    text = stringResource(R.string.home_community_activity),
-                    fontSize = 22.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            items(state.communityActivity) { activity ->
-                ActivityItem(activity = activity)
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(32.dp))
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                        .height(150.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Icon(
-                            imageVector = Icons.Default.Album,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
-                            modifier = Modifier
-                                .size(180.dp)
-                                .align(Alignment.BottomEnd)
-                                .offset(x = 40.dp, y = 40.dp)
-                        )
-                        Column(
-                            modifier = Modifier
-                                .padding(24.dp)
-                                .align(Alignment.CenterStart)
-                        ) {
-                            Text(
-                                stringResource(R.string.home_your_collection),
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                "1,248",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 42.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                stringResource(R.string.home_this_week, 12),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                        .height(180.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(
-                        0.5.dp,
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(24.dp)
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text(
-                                stringResource(R.string.home_collector_tip),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                "The first pressing of 'Visions of Dust' is currently seeing a 42% surge in marketplace value.",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 14.sp,
-                                lineHeight = 20.sp
-                            )
                         }
                     }
                 }
@@ -328,13 +241,16 @@ fun HomeScreenContent(
 @Composable
 fun TrendingAlbumItem(
     album: Album,
+
     onClick: () -> Unit
 ) {
+
     Column(
         modifier = Modifier
             .width(140.dp)
             .clickable(onClick = onClick)
     ) {
+
         AsyncImage(
             model = album.coverUrl,
             contentDescription = null,
@@ -344,6 +260,7 @@ fun TrendingAlbumItem(
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = album.title,
             color = MaterialTheme.colorScheme.onBackground,
@@ -362,7 +279,63 @@ fun TrendingAlbumItem(
     }
 }
 
+@Composable
+fun FriendListeningItem(
+    friendData: FriendListening,
+    onClick: () -> Unit
+) {
+    val album = friendData.album
+    val activity = friendData.activity
+    val username = activity.profiles?.fullName
 
+    Column(
+        modifier = Modifier
+            .width(140.dp)
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = "$username",
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+
+        AsyncImage(
+            model = album.coverUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .size(140.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = album.title,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = album.artist,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            fontSize = 11.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        if (activity.rating != null) {
+          //  Spacer(modifier = Modifier.height(12.dp))
+            StarRating(rating = activity.rating.toDouble())
+
+        }
+    }
+}
 
 
 @Preview(showBackground = true)

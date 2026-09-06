@@ -166,7 +166,7 @@ fun ReviewBottomSheetContent(
 
                     Icon(
                         imageVector = icon,
-                        contentDescription = "Nota $i",
+                        contentDescription = stringResource(R.string.cd_rating_star, i),
                         tint = if (userRating >= i - 0.5)
                             MaterialTheme.colorScheme.primary
                         else
@@ -177,7 +177,7 @@ fun ReviewBottomSheetContent(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "RATING",
+                text = stringResource(R.string.review_rating_label),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 fontSize = 10.sp,
                 letterSpacing = 1.sp
@@ -196,7 +196,7 @@ fun ReviewBottomSheetContent(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favoritar",
+                    contentDescription = stringResource(R.string.cd_favorite),
                     tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
                         alpha = 0.2f
                     ),
@@ -206,7 +206,7 @@ fun ReviewBottomSheetContent(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Favorite",
+                    text = stringResource(R.string.review_favorite),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
@@ -216,7 +216,7 @@ fun ReviewBottomSheetContent(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.Default.AddBox,
-                    contentDescription = "Adicionar ao diário",
+                    contentDescription = stringResource(R.string.cd_add_to_diary),
                     tint = if (showDateOptions || selectedDateMillis != null || yearOnly.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
                         alpha = 0.2f
                     ),
@@ -243,7 +243,7 @@ fun ReviewBottomSheetContent(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.List,
-                    contentDescription = "Listas",
+                    contentDescription = stringResource(R.string.cd_lists),
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
                     modifier = Modifier
                         .size(32.dp)
@@ -251,7 +251,7 @@ fun ReviewBottomSheetContent(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Lists",
+                    text = stringResource(R.string.review_lists),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 12.sp
                 )
@@ -276,7 +276,7 @@ fun ReviewBottomSheetContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (exactDateKnown) "Lembro a data exata" else "Lembro apenas o ano",
+                        text = if (exactDateKnown) stringResource(R.string.review_exact_date) else stringResource(R.string.review_year_only),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
                     )
@@ -290,7 +290,7 @@ fun ReviewBottomSheetContent(
                     ) {
                         val dateText = selectedDateMillis?.let {
                             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(it))
-                        } ?: "Selecionar data no calendário"
+                        } ?: stringResource(R.string.review_select_date)
                         Text(dateText)
                     }
                 } else {
@@ -301,8 +301,8 @@ fun ReviewBottomSheetContent(
                                 yearOnly = it
                             }
                         },
-                        label = { Text("Ano") },
-                        placeholder = { Text("Ex: 2014") },
+                        label = { Text(stringResource(R.string.review_year_label)) },
+                        placeholder = { Text(stringResource(R.string.review_year_placeholder)) },
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                             keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                         ),
@@ -320,7 +320,7 @@ fun ReviewBottomSheetContent(
 
         // TEXT AREA (Escrever a Review)
         Text(
-            text = "Write a Review",
+            text = stringResource(R.string.review_write_title),
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
@@ -331,7 +331,7 @@ fun ReviewBottomSheetContent(
             onValueChange = { reviewText = it },
             placeholder = {
                 Text(
-                    "The textures in this record feel like rain on obsidian...",
+                    stringResource(R.string.review_placeholder),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             },
@@ -379,7 +379,7 @@ fun ReviewBottomSheetContent(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                "SAVE REVIEW",
+                stringResource(R.string.review_save_button),
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp,
                 color = MaterialTheme.colorScheme.onPrimary
@@ -400,12 +400,12 @@ fun ReviewBottomSheetContent(
                     selectedDateMillis = datePickerState.selectedDateMillis
                     showDatePicker = false
                 }) {
-                    Text("Ok", color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.ok), color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
+                    Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onSurface)
                 }
             },
             colors = DatePickerDefaults.colors(

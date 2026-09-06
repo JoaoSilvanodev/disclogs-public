@@ -206,7 +206,7 @@ fun ProfileScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "0",
+                            text = state.followersCount.toString(),
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
@@ -220,7 +220,7 @@ fun ProfileScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "0",
+                            text = state.followingCount.toString(),
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold

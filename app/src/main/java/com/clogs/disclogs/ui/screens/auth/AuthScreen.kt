@@ -1,6 +1,10 @@
 package com.clogs.disclogs.ui.screens.auth
 
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,21 +40,41 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
 import com.clogs.disclogs.R
 import com.clogs.disclogs.ui.theme.DisclogsTheme
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import kotlinx.coroutines.launch
+
+fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
+}
 
 @Composable
 fun AuthScreen(viewModel: AuthViewModel) {
     val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     AuthScreenContent(
         state = state,
         onNameChange = { viewModel.onNameChange(it) },
@@ -61,7 +85,62 @@ fun AuthScreen(viewModel: AuthViewModel) {
         onLoginClick = { viewModel.loginWithEmail() },
         onRegisterClick = { viewModel.registerWithEmail() },
         onSpotifyLoginClick = { viewModel.loginWithSpotify() },
-        onGoogleLoginClick = { viewModel.loginWithGoogle() }
+        onGoogleLoginClick = {
+            val activity = context.findActivity()
+            if (activity == null) {
+                viewModel.onGoogleSignInError("Activity não encontrada")
+                return@AuthScreenContent
+            }
+            coroutineScope.launch {
+                val clientId = activity.getString(R.string.default_web_client_id)
+                Log.d("DISCLOGS_AUTH", "Botão Clicado! WebClientID obtido: $clientId")
+
+                val credentialManager = CredentialManager.create(activity)
+
+                val googleIdOption =
+                    com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption.Builder(
+                        serverClientId = clientId
+                    ).build()
+
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
+
+                try {
+                    Log.d("DISCLOGS_AUTH", "Chamando credentialManager.getCredential...")
+                    val result = credentialManager.getCredential(
+                        request = request,
+                        context = activity
+                    )
+                    Log.d("DISCLOGS_AUTH", "Credencial obtida com sucesso! Processando token...")
+                    val credential = result.credential
+                    if (credential is CustomCredential &&
+                        credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                    ) {
+                        val googleIdTokenCredential =
+                            GoogleIdTokenCredential.createFrom(credential.data)
+                        Log.d(
+                            "DISCLOGS_AUTH",
+                            "Token extraído com sucesso! Enviando para ViewModel..."
+                        )
+                        viewModel.onGoogleSignInResult(googleIdTokenCredential.idToken)
+                    } else {
+                        Log.e(
+                            "DISCLOGS_AUTH",
+                            "Tipo de credencial inválido recebido: ${credential.type}"
+                        )
+                        viewModel.onGoogleSignInError("Credencial inválida")
+                    }
+                } catch (e: Exception) {
+                    Log.e(
+                        "DISCLOGS_AUTH",
+                        "Erro ao obter credencial: ${e::class.java.simpleName} - ${e.message}",
+                        e
+                    )
+                    viewModel.onGoogleSignInError(e.message ?: "Erro: ${e::class.java.simpleName}")
+                }
+            }
+        }
     )
 }
 
@@ -87,10 +166,14 @@ fun AuthScreenContent(
             TopAppBar(
                 title = {
                     if (isLoginMode) {
-                        Text(text = "ENTRAR", fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        Text(
+                            text = stringResource(R.string.auth_login_title),
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
                     } else {
                         Text(
-                            text = "REGISTRE SUA CONTA",
+                            text = stringResource(R.string.auth_register_title),
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp
                         )
@@ -157,7 +240,7 @@ fun AuthScreenContent(
                             .padding(24.dp)
                     ) {
                         Text(
-                            text = "Bem-vindo",
+                            text = stringResource(R.string.auth_welcome),
                             color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
@@ -168,13 +251,13 @@ fun AuthScreenContent(
 
                         if (!isLoginMode) {
                             Text(
-                                text = "Digite suas credenciais para se registrar",
+                                text = stringResource(R.string.auth_register_subtitle),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 12.sp
                             )
                         } else {
                             Text(
-                                text = "Digite suas credenciais para entrar",
+                                text = stringResource(R.string.auth_login_subtitle),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 12.sp
                             )
@@ -183,7 +266,7 @@ fun AuthScreenContent(
 
                         if (!isLoginMode) {
                             Text(
-                                text = "NOME COMPLETO",
+                                text = stringResource(R.string.auth_full_name_label),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 letterSpacing = 1.sp
@@ -194,7 +277,7 @@ fun AuthScreenContent(
                                 onValueChange = onNameChange,
                                 placeholder = {
                                     Text(
-                                        "nome",
+                                        stringResource(R.string.auth_full_name_placeholder),
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                         fontSize = 14.sp
                                     )
@@ -215,7 +298,7 @@ fun AuthScreenContent(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
-                                text = "USERNAME",
+                                text = stringResource(R.string.auth_username_label),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 letterSpacing = 1.sp
@@ -226,7 +309,7 @@ fun AuthScreenContent(
                                 onValueChange = onUsernameChange,
                                 placeholder = {
                                     Text(
-                                        "@seu_nick",
+                                        stringResource(R.string.auth_username_placeholder),
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                         fontSize = 14.sp
                                     )
@@ -249,7 +332,7 @@ fun AuthScreenContent(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "E-MAIL",
+                            text = stringResource(R.string.auth_email_label),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                             fontSize = 10.sp,
                             letterSpacing = 1.sp
@@ -260,7 +343,7 @@ fun AuthScreenContent(
                             onValueChange = onEmailChange,
                             placeholder = {
                                 Text(
-                                    "digite seu e-mail",
+                                    stringResource(R.string.auth_email_placeholder),
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                     fontSize = 14.sp
                                 )
@@ -281,7 +364,7 @@ fun AuthScreenContent(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "SENHA",
+                            text = stringResource(R.string.auth_password_label),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                             fontSize = 10.sp,
                             letterSpacing = 1.sp
@@ -292,7 +375,7 @@ fun AuthScreenContent(
                             onValueChange = onPasswordChange,
                             placeholder = {
                                 Text(
-                                    "senha",
+                                    stringResource(R.string.auth_password_placeholder),
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                     fontSize = 14.sp
                                 )
@@ -313,7 +396,7 @@ fun AuthScreenContent(
                         Spacer(modifier = Modifier.height(16.dp))
                         if (!isLoginMode) {
                             Text(
-                                text = "CONFIRMAR SENHA",
+                                text = stringResource(R.string.auth_confirm_password_label),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 letterSpacing = 1.sp
@@ -324,7 +407,7 @@ fun AuthScreenContent(
                                 onValueChange = onConfirmPasswordChange,
                                 placeholder = {
                                     Text(
-                                        "repita a senha",
+                                        stringResource(R.string.auth_confirm_password_placeholder),
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                         fontSize = 14.sp
                                     )
@@ -368,13 +451,13 @@ fun AuthScreenContent(
                         ) {
                             if (isLoginMode) {
                                 Text(
-                                    text = "ENTRAR",
+                                    text = stringResource(R.string.auth_login_button),
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = 1.sp
                                 )
                             } else {
                                 Text(
-                                    text = "CADASTRAR",
+                                    text = stringResource(R.string.auth_register_button),
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = 1.sp
                                 )
@@ -392,7 +475,7 @@ fun AuthScreenContent(
                             )
                             if (isLoginMode) {
                                 Text(
-                                    text = " OU ENTRE COM ",
+                                    text = stringResource(R.string.auth_or_login_with),
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                     fontSize = 10.sp
                                 )
@@ -402,7 +485,7 @@ fun AuthScreenContent(
                                 )
                             } else {
                                 Text(
-                                    text = " OU CADASTRE-SE COM ",
+                                    text = stringResource(R.string.auth_or_register_with),
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                     fontSize = 10.sp
                                 )
@@ -436,7 +519,7 @@ fun AuthScreenContent(
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = "SPOTIFY",
+                                        text = stringResource(R.string.auth_spotify),
                                         color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 12.sp
@@ -462,7 +545,7 @@ fun AuthScreenContent(
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = "GOOGLE",
+                                        text = stringResource(R.string.auth_google),
                                         color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 12.sp
@@ -478,7 +561,7 @@ fun AuthScreenContent(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "NOVO POR AQUI?",
+                                    text = stringResource(R.string.auth_new_here),
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium
@@ -487,7 +570,7 @@ fun AuthScreenContent(
                                     onClick = { isLoginMode = false }
                                 ) {
                                     Text(
-                                        text = "CRIE SUA CONTA",
+                                        text = stringResource(R.string.auth_create_account),
                                         color = MaterialTheme.colorScheme.primary,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.SemiBold

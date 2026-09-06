@@ -66,3 +66,7 @@ data class SpotifyImage(
     val url: String
 )
 
+data class ManyAlbumsResponse(
+    @SerializedName("albums") val albums: List<SpotifyAlbumDto>
+)
+

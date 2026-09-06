@@ -27,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clogs.disclogs.R
 import com.clogs.disclogs.data.model.CommunityActivity
 import com.clogs.disclogs.data.model.ProfileBasicInfo
 import com.clogs.disclogs.ui.theme.DisclogsTheme
@@ -45,7 +47,7 @@ fun ActivityItem(
 ) {
 
     val userName = activity.profiles?.fullName
-        ?: activity.profiles?.username ?: "Usuário Oculto"
+        ?: activity.profiles?.username ?: stringResource(R.string.feed_hidden_user)
 
 
     Column(
@@ -126,7 +128,7 @@ fun ActivityItem(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Curtir",
+                    contentDescription = stringResource(R.string.cd_like),
                     tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
                     modifier = Modifier.size(16.dp)
                 )
@@ -148,7 +150,7 @@ fun ActivityItem(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.ChatBubbleOutline,
-                    contentDescription = "Responder",
+                    contentDescription = stringResource(R.string.cd_reply),
                     tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
                     modifier = Modifier.size(16.dp)
                 )

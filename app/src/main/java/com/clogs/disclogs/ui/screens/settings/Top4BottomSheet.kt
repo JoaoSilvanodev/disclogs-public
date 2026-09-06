@@ -61,7 +61,7 @@ fun Top4BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "SELECIONE SEU TOP 4",
+                text = stringResource(R.string.select_your_top_4),
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
@@ -111,7 +111,7 @@ fun Top4BottomSheetContent(
                         ) {
                             Icon(
                                 Icons.Default.Close,
-                                contentDescription = "Remover",
+                                contentDescription = stringResource(R.string.cd_remove),
                                 tint = MaterialTheme.colorScheme.onError,
                                 modifier = Modifier.size(14.dp)
                             )
@@ -151,7 +151,7 @@ fun Top4BottomSheetContent(
                     onSearch(it)
                 }
             },
-            placeholder = { Text("Buscar álbuns...", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+            placeholder = { Text(stringResource(R.string.search_albums_placeholder), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
             leadingIcon = { Icon(Icons.Default.Search, tint = MaterialTheme.colorScheme.onSurface, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
@@ -210,7 +210,7 @@ fun Top4BottomSheetContent(
                 border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Cancelar", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.cancel), fontWeight = FontWeight.Bold)
             }
 
             Button(
@@ -220,7 +220,7 @@ fun Top4BottomSheetContent(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Salvar", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                Text(stringResource(R.string.save), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }

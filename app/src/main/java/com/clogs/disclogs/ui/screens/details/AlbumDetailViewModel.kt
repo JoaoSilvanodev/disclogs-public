@@ -35,7 +35,12 @@ data class AlbumDetailUiState(
     val countRating: Int = 0,
     val ratingStats: RatingStats = RatingStats(),
     val albumReviews: List<CommunityActivity> = emptyList(),
-    val isReviewsLoading: Boolean = false
+    val isReviewsLoading: Boolean = false,
+    val wikiSummary: String? = null,
+    val genre: List<String> = emptyList(),
+    val recordLabel: String? = null,
+    val catalogNumber: String? = null,
+    val physicalFormat: String? = null
 )
 
 @HiltViewModel
@@ -49,10 +54,10 @@ class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepo
             _uiState.update { it.copy(isLoading = true, albumId = albumId) }
 
             val spotifyResult = repository.getAlbumDetails(albumId)
-            val supabaseResult = repository.getUserReview(albumId)
+            val reviewResult = repository.getUserReview(albumId)
             val statsResult = repository.getAlbumRatingStats(albumId)
 
-            val existingReview = supabaseResult.getOrNull()
+            val existingReview = reviewResult.getOrNull()
             val stats = statsResult.getOrNull() ?: RatingStats()
 
             val formatAverage = (stats.average * 10.0).roundToInt() / 10.0
@@ -71,7 +76,12 @@ class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepo
                         isFavorite = existingReview?.isFavorite ?: false,
                         avgRating = formatAverage,
                         countRating = stats.totCount,
-                        ratingStats = stats
+                        ratingStats = stats,
+                        wikiSummary = album.wikiSummary,
+                        genre = album.genres,
+                        recordLabel = album.recordLabel,
+                        catalogNumber = album.catalogNumber,
+                        physicalFormat = album.physicalFormat
                     )
                 }
             }.onFailure { exception ->
