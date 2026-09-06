@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,26 +23,28 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.StarHalf
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarHalf
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -58,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,24 +67,40 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.clogs.disclogs.R
 import com.clogs.disclogs.data.model.Album
-import com.clogs.disclogs.ui.components.AlbumListItem
+import com.clogs.disclogs.ui.components.UserListItem
 import com.clogs.disclogs.ui.components.placeholders.AlbumPlaceholder
 import com.clogs.disclogs.ui.theme.DisclogsTheme
 
 @Composable
 fun LibraryScreen(
     viewModel: LibraryViewModel = hiltViewModel(),
-    onNavigateToDetails: (String) -> Unit
+    onNavigateToDetails: (String) -> Unit, 
+    onNavigateToList: (String) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
 
+    var showCreateListDialog by remember { mutableStateOf(false) }
+
     LibraryContent(
         uiState = uiState,
         onSortChange = {},
-        onNavigateToDetails = onNavigateToDetails
+        onNavigateToDetails = onNavigateToDetails,
+        onNavigateToList = onNavigateToList,
+        onCreateListClick = { showCreateListDialog = true }
     )
+
+    if (showCreateListDialog) {
+        CreateListDialog(
+            onDismiss = { showCreateListDialog = false },
+            onConfirm = { name, description ->
+                viewModel.createNewList(name, description)
+                showCreateListDialog = false
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,13 +108,16 @@ fun LibraryScreen(
 fun LibraryContent(
     uiState: LibraryUiState,
     onSortChange: (String) -> Unit,
-    onNavigateToDetails: (String) -> Unit
+    onNavigateToDetails: (String) -> Unit,
+    onCreateListClick: () -> Unit,
+    onNavigateToList: (String) -> Unit
 ) {
     var abaSelecionada by remember { mutableIntStateOf(0) }
 
     // Controle do Menu de Filtro
     var filterMenuExpanded by remember { mutableStateOf(false) }
-    var currentFilterLabel by remember { mutableStateOf("RECENTES") }
+    val initialFilterLabel = stringResource(R.string.library_sort_recent)
+    var currentFilterLabel by remember { mutableStateOf(initialFilterLabel) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -112,7 +133,7 @@ fun LibraryContent(
                     ) {
 
                         Text(
-                            text = "LIBRARY",
+                            text = stringResource(R.string.library_title),
                             fontWeight = FontWeight.ExtraBold,
                             letterSpacing = 1.5.sp
                         )
@@ -133,14 +154,35 @@ fun LibraryContent(
                     }
                 }
             )
+        },
+
+        floatingActionButton = {
+            if (abaSelecionada == 2) {
+                FloatingActionButton(
+                    onClick = onCreateListClick,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Criar nova lista",
+                        tint = Color.White
+                    )
+                }
+            }
         }
+
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            val abas = listOf("ALBUMS", "ARTISTS", "LISTS")
+            val abas = listOf(
+                stringResource(R.string.library_tab_albums),
+                stringResource(R.string.library_tab_artists),
+                stringResource(R.string.library_tab_lists)
+            )
 
             ScrollableTabRow(
                 selectedTabIndex = abaSelecionada,
@@ -183,7 +225,7 @@ fun LibraryContent(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FilterList,
-                            contentDescription = "Ordenar",
+                            contentDescription = stringResource(R.string.cd_sort),
                             tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(18.dp)
                         )
@@ -204,7 +246,7 @@ fun LibraryContent(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    "Recentes",
+                                    stringResource(R.string.sort_recent),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             },
@@ -217,7 +259,7 @@ fun LibraryContent(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    "Alfabética",
+                                    stringResource(R.string.sort_alphabetical),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             },
@@ -230,7 +272,7 @@ fun LibraryContent(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    "Nota Pessoal",
+                                    stringResource(R.string.library_sort_label_personal_rating),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             },
@@ -251,54 +293,115 @@ fun LibraryContent(
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                when {
-                    uiState.isLoading -> {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
-                            contentPadding = PaddingValues(16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(24.dp),
-                        ) {
-                            items(6) {
-                                AlbumPlaceholder()
-                            }
-                        }
-                    }
+                when (abaSelecionada) {
+                    0 -> AlbumsTabContent(uiState, onNavigateToDetails)
+                    1 -> ArtistsTabContent()
+                    2 -> ListsTabContent(
+                        uiState,
+                        onListClick = onNavigateToList
+                    )
+                }
+            }
+        }
+    }
+}
 
-                    uiState.errorMessage != null -> {
-                        Text(
-                            text = "Erro: ${uiState.errorMessage}",
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
+@Composable
+fun AlbumsTabContent(
+    uiState: LibraryUiState,
+    onNavigateToDetails: (String) -> Unit
+) {
+    when {
+        uiState.isAlbumsLoading -> {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                items(6) {
+                    AlbumPlaceholder()
+                }
+            }
+        }
 
-                    uiState.myAlbums.isEmpty() -> {
-                        Text(
-                            text = "Sua biblioteca está vazia.",
-                            color = Color.Gray,
-                            fontSize = 16.sp
-                        )
-                    }
+        uiState.errorMessage != null -> {
+            Text(
+                text = stringResource(R.string.error_message, uiState.errorMessage!!),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
 
-                    else -> {
-                        // Grade Forçada
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
-                            contentPadding = PaddingValues(16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(24.dp), // Aumentei o espaço vertical para caber as estrelas
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(uiState.myAlbums) { album ->
-                                LibraryGridItem(
-                                    album = album,
-                                    userRating = album.userRating,
-                                    onNavigateToDetails = { onNavigateToDetails(album.id) }
-                                )
-                            }
-                        }
-                    }
+        uiState.myAlbums.isEmpty() -> {
+            Text(
+                text = stringResource(R.string.library_empty),
+                color = Color.Gray,
+                fontSize = 16.sp
+            )
+        }
+
+        else -> {
+            // Grade Forçada
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp), // Aumentei o espaço vertical para caber as estrelas
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(uiState.myAlbums) { album ->
+                    LibraryGridItem(
+                        album = album,
+                        userRating = album.userRating,
+                        onNavigateToDetails = { onNavigateToDetails(album.id) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ListsTabContent(
+    uiState: LibraryUiState,
+    onListClick: (String) -> Unit
+) {
+    when {
+        uiState.isListsLoading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        uiState.userLists.isEmpty() -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.library_empty_lists),
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
+            }
+        }
+
+        else -> {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 88.dp)
+            ) {
+                items(uiState.userLists) { list ->
+                    UserListItem(
+                        userList = list,
+                        onClick = { onListClick(list.id) }
+                    )
                 }
             }
         }
@@ -377,6 +480,57 @@ fun LibraryGridItem(
     }
 }
 
+@Composable
+fun ArtistsTabContent() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Artistas em breve...", color = Color.Gray)
+    }
+}
+
+@Composable
+fun CreateListDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (name: String, description: String) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Nova Lista", fontWeight = FontWeight.Bold) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Nome da lista") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Descrição (Opcional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(name, description) },
+                enabled = name.isNotBlank()
+            ) {
+                Text("Criar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun LibraryContentPreview() {
@@ -412,7 +566,7 @@ fun LibraryContentPreview() {
             )
         )
         val uiState = LibraryUiState(
-            isLoading = false,
+            isAlbumsLoading = false,
             myAlbums = sampleAlbums,
             errorMessage = null,
             currentSortType = SortType.RECENT
@@ -420,7 +574,9 @@ fun LibraryContentPreview() {
         LibraryContent(
             uiState = uiState,
             onSortChange = {},
-            onNavigateToDetails = { }
+            onNavigateToDetails = {},
+            onCreateListClick = {},
+            onNavigateToList = { }
         )
     }
 }

@@ -82,7 +82,7 @@
     <!-- Home Screen -->
     <string name="home_view_all">VER TUDO</string>
     <string name="home_no_trending">Nenhum álbum em alta no momento</string>
-    <string name="home_friends_listening">AMIGOS OUVINDO</string>
+    <string name="home_friends_listening">AMIGOS</string>
     <string name="home_community_activity">ATIVIDADE DA COMUNIDADE</string>
     <string name="home_your_collection">SUA COLEÇÃO</string>
     <string name="home_this_week">+%1$d ESSA SEMANA</string>
@@ -93,4 +93,107 @@
     <string name="all_albums">Todos os álbuns</string>
     <string name="profile_follows">SEGUINDO</string>
 
+    <!-- Auth Screen -->
+    <string name="auth_login_title">ENTRAR</string>
+    <string name="auth_register_title">REGISTRE SUA CONTA</string>
+    <string name="auth_welcome">Bem-vindo</string>
+    <string name="auth_register_subtitle">Digite suas credenciais para se registrar</string>
+    <string name="auth_login_subtitle">Digite suas credenciais para entrar</string>
+    <string name="auth_full_name_label">NOME COMPLETO</string>
+    <string name="auth_full_name_placeholder">nome</string>
+    <string name="auth_username_label">USERNAME</string>
+    <string name="auth_username_placeholder">@seu_nick</string>
+    <string name="auth_email_label">E-MAIL</string>
+    <string name="auth_email_placeholder">digite seu e-mail</string>
+    <string name="auth_password_label">SENHA</string>
+    <string name="auth_password_placeholder">senha</string>
+    <string name="auth_confirm_password_label">CONFIRMAR SENHA</string>
+    <string name="auth_confirm_password_placeholder">repita a senha</string>
+    <string name="auth_login_button">ENTRAR</string>
+    <string name="auth_register_button">CADASTRAR</string>
+    <string name="auth_or_login_with"> OU ENTRE COM </string>
+    <string name="auth_or_register_with"> OU CADASTRE-SE COM </string>
+    <string name="auth_spotify">SPOTIFY</string>
+    <string name="auth_google">GOOGLE</string>
+    <string name="auth_new_here">NOVO POR AQUI?</string>
+    <string name="auth_create_account">CRIE SUA CONTA</string>
+
+    <!-- Album Detail Screen -->
+    <string name="album_details">DETALHES</string>
+    <string name="album_reviewed_log_again">REVIEWED / LOG AGAIN</string>
+    <string name="album_add_to_library">ADD TO LIBRARY</string>
+    <string name="album_ratings">RATINGS</string>
+    <string name="album_about">ABOUT</string>
+    <string name="album_read_more">Ler mais</string>
+    <string name="album_read_less">Ler menos</string>
+    <string name="album_genres">GENEROS</string>
+    <string name="album_release_info">RELEASE INFO</string>
+    <string name="album_label">LABEL</string>
+    <string name="album_format">FORMAT</string>
+    <string name="review_saved_success">Review salva com sucesso!</string>
+    <string name="cd_album_cover">Capa do álbum %1$s</string>
+
+    <!-- Artist Screen -->
+    <string name="artist_read_full_bio">READ FULL BIO</string>
+    <string name="artist_all">ALL</string>
+    <string name="artist_albums">ALBUMS</string>
+    <string name="artist_singles">SINGLES</string>
+    <string name="artist_top_albums">Top Albums</string>
+    <string name="artist_discography">Discografia</string>
+    <string name="sort_recent">Recentes</string>
+    <string name="sort_oldest">Antigos</string>
+    <string name="sort_alphabetical">Alfabética</string>
+    <string name="cd_artist_photo">Foto de %1$s</string>
+    <string name="cd_sort">Ordenar</string>
+
+    <!-- Review Bottom Sheet -->
+    <string name="review_rating_label">RATING</string>
+    <string name="review_favorite">Favorite</string>
+    <string name="review_lists">Lists</string>
+    <string name="review_exact_date">Lembro a data exata</string>
+    <string name="review_year_only">Lembro apenas o ano</string>
+    <string name="review_select_date">Selecionar data no calendário</string>
+    <string name="review_year_label">Ano</string>
+    <string name="review_year_placeholder">Ex: 2014</string>
+    <string name="review_write_title">Write a Review</string>
+    <string name="review_placeholder">The textures in this record feel like rain on obsidian...</string>
+    <string name="cd_rating_star">Nota %1$d</string>
+    <string name="cd_favorite">Favoritar</string>
+    <string name="cd_add_to_diary">Adicionar ao diário</string>
+    <string name="cd_lists">Listas</string>
+
+    <!-- Library Screen -->
+    <string name="library_title">LIBRARY</string>
+    <string name="library_tab_albums">ALBUMS</string>
+    <string name="library_tab_artists">ARTISTS</string>
+    <string name="library_tab_lists">LISTS</string>
+    <string name="library_sort_recent">RECENTES</string>
+    <string name="library_sort_alphabetical">ALFABÉTICA</string>
+    <string name="library_sort_rating">MAIOR NOTA</string>
+    <string name="library_sort_label_personal_rating">Nota Pessoal</string>
+
+    <!-- Feed / Activity -->
+    <string name="feed_no_activity">Nenhuma atividade recente encontrada.</string>
+    <string name="feed_user_reviewed">%1$s avaliou</string>
+    <string name="feed_hidden_user">Usuário Oculto</string>
+    <string name="cd_like">Curtir</string>
+    <string name="cd_reply">Responder</string>
+
+    <!-- Common / Others -->
+    <string name="rating_yours">YOURS</string>
+    <string name="rating_community">COMMUNITY</string>
+    <string name="cd_remove">Remover</string>
+    <string name="year_placeholder">Year</string>
+
+    <string name="album_catalog">CATALOG</string>
+    <string name="album_copyright">COPYRIGHT</string>
+    <string name="album_reviews">REVIEWS</string>
+    <string name="album_no_reviews">Ainda não há reviews para este álbum.</string>
+    <string name="album_be_first_to_review">Seja o primeiro a avaliar!</string>
+    <string name="album_digital">Digital</string>
+    <string name="library_empty">Sua biblioteca está vazia.</string>
+    <string name="review_save_button">SAVE REVIEW</string>
+    <string name="ok">Ok</string>
+    <string name="home_collector_tip_content">The first pressing of \'Visions of Dust\' is currently seeing a 42% surge in marketplace value.</string>
+    <string name="library_empty_lists">\"Você ainda não criou nenhuma lista.\"</string>
 </resources>

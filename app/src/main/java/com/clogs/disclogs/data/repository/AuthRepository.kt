@@ -15,10 +15,18 @@ interface AuthRepository {
 
     suspend fun loginWithEmail(email: String, password: String): Result<Unit>
 
+    suspend fun loginWithGoogle(idToken: String): Result<Unit>
+
+    suspend fun updateEmail(newEmail: String): Result<Unit>
+
+    suspend fun updatePassword(newPassword: String): Result<Unit>
+
     suspend fun loginWithSpotify(): Result<Unit>
 
-    suspend fun loginWithGoogle(): Result<Unit>
+
 
     fun isUserLoggedIn(): Boolean
+
+    suspend fun logout(): Result<Unit>
 
 }

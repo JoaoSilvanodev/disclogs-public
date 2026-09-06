@@ -2,6 +2,7 @@ package com.clogs.disclogs.ui.screens.details
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,7 +75,7 @@ fun AlbumDetailScreen(
 
     LaunchedEffect(state.saveSuccess) {
         if (state.saveSuccess) {
-            Toast.makeText(context, "Review salva com sucesso!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.review_saved_success), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -97,13 +99,14 @@ fun AlbumDetailContent(
     val sheetState = rememberModalBottomSheetState()
 
 
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "DETALHES",
+                        stringResource(R.string.album_details),
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = 1.5.sp
                     )
@@ -118,7 +121,7 @@ fun AlbumDetailContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             tint = MaterialTheme.colorScheme.onBackground,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.cd_back_button)
                         )
                     }
                 }
@@ -139,7 +142,7 @@ fun AlbumDetailContent(
                 ) {
                     AsyncImage(
                         model = state.coverUrl,
-                        contentDescription = "Capa do album ${state.albumTitle}",
+                        contentDescription = stringResource(R.string.cd_album_cover, state.albumTitle),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -214,7 +217,7 @@ fun AlbumDetailContent(
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (state.inLibrary) "REVIEWED / LOG AGAIN" else "ADD TO LIBRARY",
+                            text = if (state.inLibrary) stringResource(R.string.album_reviewed_log_again) else stringResource(R.string.album_add_to_library),
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                             color = MaterialTheme.colorScheme.onPrimary
@@ -225,7 +228,7 @@ fun AlbumDetailContent(
 
                     // 1. ÁREA DE Notas E Histograma LARGO
                     Text(
-                        text = "RATINGS",
+                        text = stringResource(R.string.album_ratings),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
@@ -247,7 +250,43 @@ fun AlbumDetailContent(
 
                     // 2. RESUMO DO ÁLBUM (ABOUT)
                     Text(
-                        text = "ABOUT",
+                        text = stringResource(R.string.album_about),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        letterSpacing = 1.5.sp
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    state.wikiSummary?.let { text ->
+
+                        var isExpanded by remember { mutableStateOf(false) }
+                        Text(
+                            text = text,
+                            color = Color.Gray,
+                            fontSize = 14.sp,
+                            lineHeight = 22.sp,
+                            maxLines = if (isExpanded) Int.MAX_VALUE else 4,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        if  (text.length > 150) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = if (isExpanded) stringResource(R.string.album_read_less) else stringResource(R.string.album_read_more),
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                modifier = Modifier.clickable {
+                                    isExpanded = !isExpanded
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Text(
+                        text = stringResource(R.string.album_genres),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
@@ -255,17 +294,20 @@ fun AlbumDetailContent(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "An uncompromising record that defines the current mood. The production is flawless, heavy yet spacious, drawing from classical literature influences to weave a narrative of isolation and reflection. Recorded in the depths of winter, the soundscapes feel as vast and solitary as a Norwegian fjord.",
-                        color = Color.Gray,
-                        fontSize = 14.sp,
-                        lineHeight = 22.sp
+                        text = state.genre.joinToString(" • ") { it.uppercase() },
+                        color = MaterialTheme.colorScheme.primary, // Usa a cor principal do seu app
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+                    Spacer(modifier = Modifier.height(24.dp))
+
 
                     // 3. INFORMAÇÕES DE LANÇAMENTO (RELEASE INFO)
                     Text(
-                        text = "RELEASE INFO",
+                        text = stringResource(R.string.album_release_info),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
@@ -276,58 +318,65 @@ fun AlbumDetailContent(
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "LABEL",
+                                text = stringResource(R.string.album_label),
                                 color = Color.Gray,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Three Blind Mice",
+                                text = state.recordLabel ?: "N/A",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp
                             )
 
+
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
-                                text = "FORMAT",
+                                text = stringResource(R.string.album_format),
                                 color = Color.Gray,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(2.dp))
+
                             Text(
-                                text = "Vinyl, LP, Album",
+                                text = state.physicalFormat ?: stringResource(R.string.album_digital),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp
                             )
                         }
+
+
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "CATALOG",
+                                text = stringResource(R.string.album_catalog),
                                 color = Color.Gray,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "TBM-CD-2524",
+                                text = state.catalogNumber ?: "-",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp
                             )
 
+
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
-                                text = "COPYRIGHT",
+                                text = stringResource(R.string.album_copyright),
                                 color = Color.Gray,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(2.dp))
+                            val yearText =
+                                if (state.releaseYear.isNotBlank()) "℗ ${state.releaseYear}" else "-"
                             Text(
-                                text = "℗ 1974 TBM Records",
+                                yearText,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp
                             )
@@ -336,11 +385,12 @@ fun AlbumDetailContent(
                 }
             }
 
+
             if (state.albumReviews.isNotEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(32.dp))
                     Text(
-                        text = "REVIEWS",
+                        text = stringResource(R.string.album_reviews),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
@@ -365,12 +415,12 @@ fun AlbumDetailContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Ainda não há reviews para este álbum.",
+                            text = stringResource(R.string.album_no_reviews),
                             color = Color.Gray,
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "Seja o primeiro a avaliar!",
+                            text = stringResource(R.string.album_be_first_to_review),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
@@ -399,20 +449,20 @@ fun AlbumDetailContent(
     }
 }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun AlbumDetailScreenPreview() {
-        DisclogsTheme {
-            AlbumDetailContent(
-                state = AlbumDetailUiState(
-                    isLoading = false,
-                    albumTitle = "Misty",
-                    artistName = "Tsuyoshi Yamamoto Trio",
-                    coverUrl = "",
-                    releaseYear = "1974"
-                ),
-                onSaveReview = { _, _, _, _, _ -> },
-                onBackClick = { }
-            )
-        }
+@Preview(showBackground = true)
+@Composable
+fun AlbumDetailScreenPreview() {
+    DisclogsTheme {
+        AlbumDetailContent(
+            state = AlbumDetailUiState(
+                isLoading = false,
+                albumTitle = "Misty",
+                artistName = "Tsuyoshi Yamamoto Trio",
+                coverUrl = "",
+                releaseYear = "1974"
+            ),
+            onSaveReview = { _, _, _, _, _ -> },
+            onBackClick = { }
+        )
     }
+}

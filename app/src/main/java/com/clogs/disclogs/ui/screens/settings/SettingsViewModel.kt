@@ -1,6 +1,5 @@
 package com.clogs.disclogs.ui.screens.settings
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clogs.disclogs.data.model.Album
@@ -23,6 +22,7 @@ data class SettingsUiState(
     val isLoading: Boolean = true,
     val profile: Profiles? = null,
     val email: String = "",
+    val password: String = "",
     val top4Ids: List<Album> = emptyList(),
     val errorMessage: String? = null,
     val isSearching: Boolean = false,
@@ -31,11 +31,11 @@ data class SettingsUiState(
 )
 
 
-
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
-    private val albumRepository: AlbumRepository
+    private val albumRepository: AlbumRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -60,8 +60,9 @@ class SettingsViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         profile = profile,
-                        top4Ids = profile.top4 ?: emptyList()
-                    )
+                        top4Ids = profile?.top4 ?: emptyList(),
+
+                        )
                 }
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
@@ -115,7 +116,7 @@ class SettingsViewModel @Inject constructor(
             _uiState.update { it.copy(isSearching = true, searchError = null) }
             delay(500)
 
-            val resultados = albumRepository.searchAlbums(query)
+            val resultados = albumRepository.searchAlbums(query, "Album")
 
             resultados.onSuccess { listaAlbuns ->
                 _uiState.update {
@@ -137,6 +138,56 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun updateEmail(newEmail: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val result = authRepository.updateEmail(newEmail)
+
+            result.onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        email = newEmail
+                    )
+                }
+            }.onFailure { e ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message
+                    )
+                }
+            }
+        }
+    }
+
+    fun updatePassword(newPassword: String) {
+        viewModelScope.launch {
+
+            _uiState.update { it.copy(isLoading = true) }
+
+            val result = authRepository.updatePassword(newPassword)
+
+            result.onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
+            }.onFailure { e ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message
+                    )
+                }
+            }
+        }
+
+    }
+
     fun clearSearch() {
         _uiState.update {
             it.copy(
@@ -144,6 +195,12 @@ class SettingsViewModel @Inject constructor(
                 isSearching = false,
                 searchError = null
             )
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            authRepository.logout()
         }
     }
 }

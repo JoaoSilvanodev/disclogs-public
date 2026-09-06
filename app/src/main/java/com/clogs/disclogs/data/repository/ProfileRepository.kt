@@ -1,12 +1,13 @@
 package com.clogs.disclogs.data.repository
 
 import com.clogs.disclogs.data.model.Album
+import com.clogs.disclogs.data.model.CommunityActivity
 import com.clogs.disclogs.data.model.FriendActivity
 import com.clogs.disclogs.data.model.Profiles
 
 interface ProfileRepository {
 
-    suspend fun getCurrentUser(): Result<Profiles>
+    suspend fun getCurrentUser(): Result<Profiles?>
 
     suspend fun updateProfile(
         fullName: String? = null,
@@ -28,5 +29,9 @@ interface ProfileRepository {
 
     suspend fun updateFcmToken(token: String): Result<Unit>
 
-    suspend fun getFriendActivity(): Result<List<FriendActivity>>
+    suspend fun getFriendActivity(): Result<List<CommunityActivity>>
+
+    suspend fun getFollowersCount(userId: String): Result<Int>
+
+    suspend fun getFollowingCount(userId: String): Result<Int>
 }

@@ -1,5 +1,6 @@
 package com.clogs.disclogs.di;
 
+import com.clogs.disclogs.data.remote.FirebaseDataSource;
 import com.clogs.disclogs.data.repository.ProfileRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -7,7 +8,6 @@ import dagger.internal.Preconditions;
 import dagger.internal.Provider;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
-import io.github.jan.supabase.SupabaseClient;
 import javax.annotation.processing.Generated;
 
 @ScopeMetadata("javax.inject.Singleton")
@@ -27,24 +27,24 @@ import javax.annotation.processing.Generated;
     "nullness:initialization.field.uninitialized"
 })
 public final class AppModule_ProvideProfileRepositoryFactory implements Factory<ProfileRepository> {
-  private final Provider<SupabaseClient> supabaseClientProvider;
+  private final Provider<FirebaseDataSource> firebaseDataSourceProvider;
 
   private AppModule_ProvideProfileRepositoryFactory(
-      Provider<SupabaseClient> supabaseClientProvider) {
-    this.supabaseClientProvider = supabaseClientProvider;
+      Provider<FirebaseDataSource> firebaseDataSourceProvider) {
+    this.firebaseDataSourceProvider = firebaseDataSourceProvider;
   }
 
   @Override
   public ProfileRepository get() {
-    return provideProfileRepository(supabaseClientProvider.get());
+    return provideProfileRepository(firebaseDataSourceProvider.get());
   }
 
   public static AppModule_ProvideProfileRepositoryFactory create(
-      Provider<SupabaseClient> supabaseClientProvider) {
-    return new AppModule_ProvideProfileRepositoryFactory(supabaseClientProvider);
+      Provider<FirebaseDataSource> firebaseDataSourceProvider) {
+    return new AppModule_ProvideProfileRepositoryFactory(firebaseDataSourceProvider);
   }
 
-  public static ProfileRepository provideProfileRepository(SupabaseClient supabaseClient) {
-    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideProfileRepository(supabaseClient));
+  public static ProfileRepository provideProfileRepository(FirebaseDataSource firebaseDataSource) {
+    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideProfileRepository(firebaseDataSource));
   }
 }

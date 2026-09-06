@@ -253,7 +253,7 @@ fun SearchScreenContent(
                     ) {
                         item {
                             Text(
-                                text = "Resultado",
+                                text = stringResource(R.string.title_search_results),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
@@ -306,7 +306,7 @@ fun UserListItem(user: Profiles, onClick: () -> Unit) {
     ) {
         AsyncImage(
             model = user.avatarUrl ?: R.drawable.profile,
-            contentDescription = "Avatar de ${user.username}",
+            contentDescription = stringResource(R.string.cd_artist_photo, user.username),
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape),

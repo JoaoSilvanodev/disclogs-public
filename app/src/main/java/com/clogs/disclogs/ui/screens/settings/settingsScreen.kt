@@ -54,8 +54,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.clogs.disclogs.R
+import androidx.compose.ui.tooling.preview.Preview
+import com.clogs.disclogs.data.model.Album
+import com.clogs.disclogs.data.model.Profiles
+import com.clogs.disclogs.ui.screens.settings.components.UpdateEmailSheet
+import com.clogs.disclogs.ui.screens.settings.components.UpdatePasswordSheet
+import com.clogs.disclogs.ui.theme.DisclogsTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
@@ -64,8 +69,35 @@ fun SettingsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    SettingsScreenContent(
+        state = state,
+        modifier = modifier,
+        onBackClick = onBackClick,
+        onSignOut = { viewModel.signOut() },
+        onSearchAlbums = { viewModel.searchAlbums(it) },
+        onUpdateTop4 = { viewModel.updateTop4(it) },
+        onClearSearch = { viewModel.clearSearch() },
+        onUpdateEmail = { viewModel.updateEmail(it) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreenContent(
+    state: SettingsUiState,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+    onSignOut: () -> Unit = {},
+    onSearchAlbums: (String) -> Unit = {},
+    onUpdateTop4: (List<Album>) -> Unit = {},
+    onClearSearch: () -> Unit = {},
+    onUpdateEmail: (String) -> Unit = {},
+    onUpdatePassword: (String) -> Unit = {}
+) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showTop4Sheet by remember { mutableStateOf(false) }
+    var showEmailSheet by remember { mutableStateOf(false) }
+    var showPasswordSheet by remember { mutableStateOf(false) }
 
     var pushEnabled by remember { mutableStateOf(true) }
     var emailDigestEnabled by remember { mutableStateOf(true) }
@@ -97,7 +129,10 @@ fun SettingsScreen(
             }
 
             item {
-                SectionHeader(stringResource(R.string.settings_section_profile), Icons.Default.Person)
+                SectionHeader(
+                    stringResource(R.string.settings_section_profile),
+                    Icons.Default.Person
+                )
 
                 ClickableItem(
                     title = stringResource(R.string.settings_fav_albums_title),
@@ -114,18 +149,21 @@ fun SettingsScreen(
             }
 
             item {
-                SectionHeader(stringResource(R.string.settings_section_account), Icons.Default.Person)
+                SectionHeader(
+                    stringResource(R.string.settings_section_account),
+                    Icons.Default.Person
+                )
 
                 ClickableItem(
                     title = stringResource(R.string.settings_email_title),
                     subtitle = stringResource(R.string.settings_email_subtitle),
-                    onClick = {}
+                    onClick = { showEmailSheet = true }
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 ClickableItem(
                     title = stringResource(R.string.settings_password_title),
                     subtitle = stringResource(R.string.settings_password_subtitle),
-                    onClick = {}
+                    onClick = { showPasswordSheet  = true}
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 ClickableItem(
@@ -138,7 +176,10 @@ fun SettingsScreen(
             }
 
             item {
-                SectionHeader(stringResource(R.string.settings_section_notifications), Icons.Default.Notifications)
+                SectionHeader(
+                    stringResource(R.string.settings_section_notifications),
+                    Icons.Default.Notifications
+                )
                 SettingsToggleItem(
                     title = stringResource(R.string.settings_push_notifications_title),
                     subtitle = stringResource(R.string.settings_push_notifications_subtitle),
@@ -157,7 +198,10 @@ fun SettingsScreen(
             }
 
             item {
-                SectionHeader(stringResource(R.string.settings_section_appearance), Icons.Default.Palette)
+                SectionHeader(
+                    stringResource(R.string.settings_section_appearance),
+                    Icons.Default.Palette
+                )
 
                 ClickableItem(
                     title = stringResource(R.string.settings_theme_title),
@@ -175,7 +219,10 @@ fun SettingsScreen(
             }
 
             item {
-                SectionHeader(stringResource(R.string.settings_section_privacy), Icons.Default.Security)
+                SectionHeader(
+                    stringResource(R.string.settings_section_privacy),
+                    Icons.Default.Security
+                )
 
                 ClickableItem(
                     title = stringResource(R.string.settings_visibility_title),
@@ -215,7 +262,7 @@ fun SettingsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { /* onLogout() */ }
+                        .clickable { onSignOut() }
                         .padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -241,27 +288,66 @@ fun SettingsScreen(
             ModalBottomSheet(
                 onDismissRequest = {
                     showTop4Sheet = false
-                    viewModel.clearSearch()
+                    onClearSearch()
                 },
                 sheetState = sheetState,
                 containerColor = MaterialTheme.colorScheme.surface,
-                dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) }
+                dragHandle = {
+                    BottomSheetDefaults.DragHandle(
+                        color = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.2f
+                        )
+                    )
+                }
             ) {
                 Top4BottomSheetContent(
                     initialSelection = state.top4Ids,
                     searchResults = state.searchResults,
                     isSearching = state.isSearching,
                     onSearch = { query ->
-                        viewModel.searchAlbums(query)
+                        onSearchAlbums(query)
                     },
                     onSaveClick = { novosDiscos ->
-                        viewModel.updateTop4(novosDiscos)
+                        onUpdateTop4(novosDiscos)
                         showTop4Sheet = false
                     },
                     onCancelClick = {
                         showTop4Sheet = false
-                        viewModel.clearSearch()
+                        onClearSearch()
                     }
+                )
+            }
+        }
+
+        if (showEmailSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showEmailSheet = false },
+
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
+                UpdateEmailSheet(
+                    currentEmail = state.email,
+                    onSaveClick = { email ->
+                        onUpdateEmail(email)
+                        showEmailSheet = false
+                    },
+                    onCancelClick = { showEmailSheet = false },
+                    onCloseClick = { showEmailSheet = false }
+                )
+            }
+        } else if (showPasswordSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showPasswordSheet = false },
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
+                UpdatePasswordSheet(
+                    currentPassword = state.password,
+                    onSaveClick = { pass ->
+                        onUpdatePassword(pass)
+                        showPasswordSheet = false
+                    },
+                    onCancelClick = { showPasswordSheet = false },
+                    onCloseClick = { showPasswordSheet = false }
                 )
             }
         }
@@ -381,5 +467,25 @@ fun SettingsToggleItem(
                 uncheckedTrackColor = MaterialTheme.colorScheme.surface
             )
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SettingsScreenPreview() {
+    val sampleAlbums = listOf(
+        Album(id = "1", title = "The Dark Side of the Moon", artist = "Pink Floyd", coverUrl = ""),
+        Album(id = "2", title = "Abbey Road", artist = "The Beatles", coverUrl = ""),
+        Album(id = "3", title = "Thriller", artist = "Michael Jackson", coverUrl = ""),
+        Album(id = "4", title = "Back in Black", artist = "AC/DC", coverUrl = "")
+    )
+    val sampleState = SettingsUiState(
+        isLoading = false,
+        email = "user@example.com",
+        top4Ids = sampleAlbums,
+        profile = Profiles(id = "1", username = "johndoe", fullName = "John Doe")
+    )
+    DisclogsTheme {
+        SettingsScreenContent(state = sampleState)
     }
 }

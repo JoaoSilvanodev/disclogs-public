@@ -6,6 +6,7 @@ import com.clogs.disclogs.ui.screens.details.AlbumDetailViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.details.ArtistViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.home.HomeViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.library.LibraryViewModel_HiltModules;
+import com.clogs.disclogs.ui.screens.library.list.ListViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.profile.ProfileViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.search.SearchViewModel_HiltModules;
 import com.clogs.disclogs.ui.screens.settings.SettingsViewModel_HiltModules;
@@ -168,6 +169,7 @@ public final class SupabaseApplication_HiltComponents {
           HiltWrapper_ActivitySavedStateHandleModule.class,
           HomeViewModel_HiltModules.KeyModule.class,
           LibraryViewModel_HiltModules.KeyModule.class,
+          ListViewModel_HiltModules.KeyModule.class,
           ProfileViewModel_HiltModules.KeyModule.class,
           SearchViewModel_HiltModules.KeyModule.class,
           SettingsViewModel_HiltModules.KeyModule.class,
@@ -214,6 +216,7 @@ public final class SupabaseApplication_HiltComponents {
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           HomeViewModel_HiltModules.BindsModule.class,
           LibraryViewModel_HiltModules.BindsModule.class,
+          ListViewModel_HiltModules.BindsModule.class,
           ProfileViewModel_HiltModules.BindsModule.class,
           SearchViewModel_HiltModules.BindsModule.class,
           SettingsViewModel_HiltModules.BindsModule.class

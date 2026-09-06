@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.clogs.disclogs.app-mergeDebugResources-61:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "com.clogs.disclogs.app-mergeDebugResources-63:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
-                    "source": "/home/joaopedro/.gradle/caches/9.4.1/transforms/fe5c83a80d7bafcbc6f1cca4ba11b9d9/transformed/core-splashscreen-1.2.0/res/values-watch-v20/values-watch-v20.xml",
+                    "source": "/home/joaopedro/.gradle/caches/9.4.1/transforms/2109955a248eca045f86608f9b2d19c2/transformed/core-splashscreen-1.2.0/res/values-watch-v20/values-watch-v20.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/home/joaopedro/.gradle/caches/9.4.1/transforms/729875f2840fe5123cb47330b7f867ef/transformed/play-services-auth-21.1.1/res/values-watch-v20/values.xml",
+                    "source": "/home/joaopedro/.gradle/caches/9.4.1/transforms/546d726c8dc7d6e4792fcc5964c0317e/transformed/play-services-auth-21.1.1/res/values-watch-v20/values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11",
                         "startColumns": "0,0,0,0,0,0,0,0",
@@ -35,6 +35,25 @@
                         "startOffsets": "55,134,214,293,372,463,544,635",
                         "endColumns": "78,79,78,78,90,80,90,79",
                         "endOffsets": "129,209,288,367,458,539,630,710"
+                    }
+                },
+                {
+                    "source": "/home/joaopedro/.gradle/caches/9.4.1/transforms/432c5d7b5b16106b959df7229e04f677/transformed/appcompat-1.7.0/res/values-watch-v20/values-watch-v20.xml",
+                    "from": {
+                        "startLines": "2,5,8",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,214,385",
+                        "endLines": "4,7,10",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "209,380,553"
+                    },
+                    "to": {
+                        "startLines": "18,21,24",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "1294,1453,1624",
+                        "endLines": "20,23,26",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "1448,1619,1792"
                     }
                 }
             ]

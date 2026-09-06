@@ -10,6 +10,12 @@ public final class BuildConfig {
   public static final int VERSION_CODE = 1;
   public static final String VERSION_NAME = "1.0";
   // Field from default config.
+  public static final String DISCOGS_TOKEN = "fgQWafMlXsjNftSLYfCaHJnigwAZMrnZtTdFHwFf";
+  // Field from default config.
+  public static final String GOOGLE_AUTH_ID = "893754959503-0buoss4at67h602ubnntbau31g691e7j.apps.googleusercontent.com";
+  // Field from default config.
+  public static final String LASTFM_KEY = "2ae5a3e386c62a452059364f7ccd92d4";
+  // Field from default config.
   public static final String SPOTIFY_CLIENT_ID = "cc67bc14fa24406586963a8fef4c4963";
   // Field from default config.
   public static final String SPOTIFY_CLIENT_SECRET = "420693132a62432da5367db0c6a0c9be";

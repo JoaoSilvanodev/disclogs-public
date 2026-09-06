@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import com.clogs.disclogs.ui.theme.DisclogsTheme
 import com.clogs.disclogs.ui.components.shimmerEffect
 
 @Composable
@@ -39,5 +41,13 @@ fun AlbumPlaceholder() {
                 .height(10.dp)
                 .shimmerEffect()
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AlbumPlaceholderPreview() {
+    DisclogsTheme {
+        AlbumPlaceholder()
     }
 }

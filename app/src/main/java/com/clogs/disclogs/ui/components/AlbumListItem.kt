@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,12 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clogs.disclogs.R
 import com.clogs.disclogs.data.model.Album
 
 
@@ -53,7 +56,7 @@ fun AlbumListItem(
         {
             AsyncImage(
                 model = album.coverUrl,
-                contentDescription = "Capa do álbum ${album.title}",
+                contentDescription = stringResource(R.string.cd_album_cover, album.title),
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(4.dp)),
@@ -89,7 +92,7 @@ fun AlbumListItem(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    val anoParaExibir = album.releaseYear.ifBlank { "Year" }
+                    val anoParaExibir = album.releaseYear.ifBlank { stringResource(R.string.year_placeholder) }
 
                     Text(
                         text = "$anoParaExibir • ${album.type}",
@@ -130,11 +133,13 @@ fun RecentAlbumItem(
     ) {
         AsyncImage(
             model = album.coverUrl,
-            contentDescription = "Capa do álbum ${album.title}",
+            contentDescription = stringResource(R.string.cd_album_cover, album.title),
+            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(150.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            contentScale = ContentScale.Crop
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(8.dp))
+
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -161,19 +166,4 @@ fun RecentAlbumItem(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AlbumListItemPreview() {
-    RecentAlbumItem(
-        album = Album(
-            id = "1",
-            title = "Master of Puppets",
-            releaseYear = "1986",
-            artist = "Metallica",
-            coverUrl = "",
-            averageRating = 4.8
-        ),
-        onAlbumClick = {}
-    )
 
-}

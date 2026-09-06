@@ -4,18 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clogs.disclogs.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.Spotify
-import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import javax.inject.Inject
 
 data class AuthUiState(
@@ -25,19 +18,17 @@ data class AuthUiState(
     val password: String = "",
     val confirmPassword: String = "",
     val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
     val errorMessage: String? = null
 )
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val supabaseClient: SupabaseClient
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
-
-    val sessionStatus: StateFlow<SessionStatus> = supabaseClient.auth.sessionStatus
 
     fun onNameChange(newValue: String) {
         _uiState.update { it.copy(name = newValue, errorMessage = null) }
@@ -67,7 +58,7 @@ class AuthViewModel @Inject constructor(
             val result = authRepository.loginWithEmail(state.email, state.password)
 
             result.onSuccess {
-                println("DISCLOGS DEBUG: Login com sucesso! O Supabase autorizou.")
+                println("DISCLOGS DEBUG: Login com sucesso!")
                 _uiState.update { it.copy(isLoading = false) }
             }.onFailure { e ->
                 println("DISCLOGS DEBUG: Login com falha! ${e.message}")
@@ -94,7 +85,7 @@ class AuthViewModel @Inject constructor(
                 nick = state.username
             )
             result.onSuccess {
-                println("DISCLOGS DEBUG: registro com sucesso! O Supabase autorizou.")
+                println("DISCLOGS DEBUG: registro com sucesso!")
                 _uiState.update { it.copy(isLoading = false) }
             }.onFailure { e ->
                 println("DISCLOGS DEBUG: registro com falha! ${e.message}")
@@ -117,18 +108,27 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun loginWithGoogle() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val result = authRepository.loginWithGoogle()
 
-            result.onSuccess {
-                _uiState.update { it.copy(isLoading = false) }
+    fun onGoogleSignInResult(idToken: String?) {
+        if (idToken == null) {
+            _uiState.update { it.copy(isLoading = false, errorMessage = "Falha ao obter token do Google") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            val loginResult = authRepository.loginWithGoogle(idToken)
+
+            loginResult.onSuccess {
+                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
             }.onFailure { e ->
-                println("DISCLOGS DEBUG: Falha no Google -> ${e.message}")
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
+    }
+
+    fun onGoogleSignInError(errorMsg: String?) {
+        _uiState.update { it.copy(isLoading = false, errorMessage = errorMsg) }
     }
 
 }

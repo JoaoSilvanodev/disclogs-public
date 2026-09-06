@@ -169,4 +169,23 @@ class SpotifyRemoteDataSource(private val apiService: SpotifyApiService) {
             Result.failure(e)
         }
     }
+
+    // metodo que chama a API e trata o erro de rede
+    suspend fun getManyAlbums(commaSeparatedIds: String): Result<List<SpotifyAlbumDto>> {
+        return try {
+            val token = getValidToken()
+
+            val response = apiService
+                .getManyAlbums("Bearer $token", ids = commaSeparatedIds)
+
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!.albums)
+            } else {
+                Result.failure(Exception("Erro na API: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            System.err.println("Erro na função getManyAlbums: ${e.message}")
+            Result.failure(e)
+        }
+    }
 }

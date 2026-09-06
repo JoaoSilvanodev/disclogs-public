@@ -6,7 +6,6 @@ import dagger.internal.DaggerGenerated;
 import dagger.internal.InjectedFieldSignature;
 import dagger.internal.Provider;
 import dagger.internal.QualifierMetadata;
-import io.github.jan.supabase.SupabaseClient;
 import javax.annotation.processing.Generated;
 
 @QualifierMetadata
@@ -25,31 +24,20 @@ import javax.annotation.processing.Generated;
     "nullness:initialization.field.uninitialized"
 })
 public final class MainActivity_MembersInjector implements MembersInjector<MainActivity> {
-  private final Provider<SupabaseClient> supabaseClientProvider;
-
   private final Provider<ProfileRepository> profileRepositoryProvider;
 
-  private MainActivity_MembersInjector(Provider<SupabaseClient> supabaseClientProvider,
-      Provider<ProfileRepository> profileRepositoryProvider) {
-    this.supabaseClientProvider = supabaseClientProvider;
+  private MainActivity_MembersInjector(Provider<ProfileRepository> profileRepositoryProvider) {
     this.profileRepositoryProvider = profileRepositoryProvider;
   }
 
   @Override
   public void injectMembers(MainActivity instance) {
-    injectSupabaseClient(instance, supabaseClientProvider.get());
     injectProfileRepository(instance, profileRepositoryProvider.get());
   }
 
   public static MembersInjector<MainActivity> create(
-      Provider<SupabaseClient> supabaseClientProvider,
       Provider<ProfileRepository> profileRepositoryProvider) {
-    return new MainActivity_MembersInjector(supabaseClientProvider, profileRepositoryProvider);
-  }
-
-  @InjectedFieldSignature("com.clogs.disclogs.MainActivity.supabaseClient")
-  public static void injectSupabaseClient(MainActivity instance, SupabaseClient supabaseClient) {
-    instance.supabaseClient = supabaseClient;
+    return new MainActivity_MembersInjector(profileRepositoryProvider);
   }
 
   @InjectedFieldSignature("com.clogs.disclogs.MainActivity.profileRepository")

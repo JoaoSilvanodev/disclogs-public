@@ -6,7 +6,6 @@ import dagger.internal.Factory;
 import dagger.internal.Provider;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
-import io.github.jan.supabase.SupabaseClient;
 import javax.annotation.processing.Generated;
 
 @ScopeMetadata
@@ -28,26 +27,20 @@ import javax.annotation.processing.Generated;
 public final class AuthViewModel_Factory implements Factory<AuthViewModel> {
   private final Provider<AuthRepository> authRepositoryProvider;
 
-  private final Provider<SupabaseClient> supabaseClientProvider;
-
-  private AuthViewModel_Factory(Provider<AuthRepository> authRepositoryProvider,
-      Provider<SupabaseClient> supabaseClientProvider) {
+  private AuthViewModel_Factory(Provider<AuthRepository> authRepositoryProvider) {
     this.authRepositoryProvider = authRepositoryProvider;
-    this.supabaseClientProvider = supabaseClientProvider;
   }
 
   @Override
   public AuthViewModel get() {
-    return newInstance(authRepositoryProvider.get(), supabaseClientProvider.get());
+    return newInstance(authRepositoryProvider.get());
   }
 
-  public static AuthViewModel_Factory create(Provider<AuthRepository> authRepositoryProvider,
-      Provider<SupabaseClient> supabaseClientProvider) {
-    return new AuthViewModel_Factory(authRepositoryProvider, supabaseClientProvider);
+  public static AuthViewModel_Factory create(Provider<AuthRepository> authRepositoryProvider) {
+    return new AuthViewModel_Factory(authRepositoryProvider);
   }
 
-  public static AuthViewModel newInstance(AuthRepository authRepository,
-      SupabaseClient supabaseClient) {
-    return new AuthViewModel(authRepository, supabaseClient);
+  public static AuthViewModel newInstance(AuthRepository authRepository) {
+    return new AuthViewModel(authRepository);
   }
 }

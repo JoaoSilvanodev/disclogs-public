@@ -31,7 +31,8 @@ data class Review(
 @Serializable
 data class TrendingAlbums(
     @SerialName("album_id") val albumId: String,
-    @SerialName("total_reviews") val totalReview: Int
+    @SerialName("average_rating") val averageRating: Double,
+    @SerialName("total_reviews") val totalReviews: Int
 )
 
 @Serializable
@@ -46,13 +47,13 @@ data class FollowingId(
 )
 
 
-//
 @Serializable
 data class FriendActivity(
     val id: Long,
     @SerialName("user_id") val userId: String,
     @SerialName("album_id") val albumId: String,
     val rating: Float? = null,
+    val comment: String? = null,
     @SerialName("created_at") val createdAt: String,
     val profiles: FriendProfile? = null
 )
@@ -60,6 +61,7 @@ data class FriendActivity(
 @Serializable
 data class FriendProfile(
     val username: String,
+    @SerialName("full_name") val fullName: String? = null,
     @SerialName("avatar_url") val avatarUrl: String? = null
 )
 
@@ -90,4 +92,21 @@ data class ProfileBasicInfo(
     val username: String? = null,
     @SerialName("full_name") val fullName: String? = null,
     @SerialName("avatar_url") val avatarUrl: String? = null
+)
+
+@Serializable
+data class UserLists(
+    val id: String = "",
+    @SerialName("user_id") val userId: String = "",
+    val name: String,
+    val description: String,
+    @SerialName("created_at") val createdAt: String? = null,
+)
+
+@Serializable
+data class ListItem(
+    val id: Long = 0,
+    @SerialName("list_id") val listId: String,
+    @SerialName("album_id") val albumId: String,
+    @SerialName("added_at") val addedAt: String? = null
 )
