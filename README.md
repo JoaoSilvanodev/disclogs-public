@@ -25,8 +25,10 @@ Aplicativo Android inspirado em plataformas como Letterboxd, voltado para descob
 - Coil (imagens)
 
 ### Backend & Integrações
-- Supabase (Auth + PostgreSQL)
+- Firebase
 - Spotify Web API (Retrofit / OkHttp)
+- LasmFm Api
+- Discogs Api
 
 ## Arquitetura
 O projeto segue o padrão MVVM, com separação clara entre camadas de apresentação, domínio e dados. O gerenciamento de estado é feito com StateFlow, garantindo reatividade e previsibilidade.
