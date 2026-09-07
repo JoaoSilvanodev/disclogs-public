@@ -143,6 +143,3 @@ class AlbumRepositoryImpl @Inject constructor(
     }
 }
 
-
-@Serializable
-data class RatingRow(val rating: Double)
