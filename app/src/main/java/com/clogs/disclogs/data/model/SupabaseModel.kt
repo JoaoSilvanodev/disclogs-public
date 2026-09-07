@@ -17,15 +17,15 @@ data class Profiles(
 @Serializable
 data class Review(
     val id: Long? = null,
-    @SerialName("user_id") val userId: String,
-    @SerialName("album_id") val albumId: String,
+    val userId: String = "",
+    val album: Album = Album(),
     val rating: Double? = null,
     val comment: String? = null,
-    @SerialName("created_at") val createdAt: String? = null,
-    @SerialName("is_favorite") val isFavorite: Boolean = false,
-    @SerialName("is_logged") val isLogged: Boolean = false,
-    @SerialName("listen_date") val listenDate: Long? = null,
-    @SerialName("date_precision") val datePrecision: String = "EXACT"
+    val createdAt: String? = null,
+    val isFavorite: Boolean = false,
+    val isLogged: Boolean = false,
+    val listenDate: Long? = null,
+    val datePrecision: String = "EXACT"
 )
 
 @Serializable
@@ -37,7 +37,7 @@ data class TrendingAlbums(
 
 @Serializable
 data class ReviewRow(
-    @SerialName("album_id") val albumId: String
+    @SerialName("id") val albumId: String
 )
 
 // lista de IDs de quem o usuário segue

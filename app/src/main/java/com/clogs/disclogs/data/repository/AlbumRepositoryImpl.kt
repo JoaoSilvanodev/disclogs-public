@@ -1,12 +1,12 @@
 package com.clogs.disclogs.data.repository
 
 
+import android.util.Log
 import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.data.model.CommunityActivity
 import com.clogs.disclogs.data.model.RatingStats
 import com.clogs.disclogs.data.model.Review
 
-import com.clogs.disclogs.data.model.TrendingAlbums
 import com.clogs.disclogs.data.remote.FirebaseDataSource
 import com.clogs.disclogs.data.remote.discogs.DiscogsRemoteDataSource
 import com.clogs.disclogs.data.remote.lastfm.LastfmRemoteDataSource
@@ -34,15 +34,72 @@ class AlbumRepositoryImpl @Inject constructor(
     override suspend fun saveUserReview(review: Review): Result<Unit> {
         return try {
             firebaseDataSource.saveInteraction(review)
+            Log.d("AlbumRepositoryImpl", "Review salva com sucesso repository: $review")
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getAlbumDetails(albumId: String?): Result<Album> {
+    override suspend fun getAlbumDetails(albumId: String): Result<Album> {
         return try {
-            spotifyDataSource.getAlbumDetails(albumId)
+
+            // 1. Tenta pegar do cache do Firebase primeiro
+            val cachedAlbum = firebaseDataSource.getAlbumById(albumId)
+
+            if (cachedAlbum != null) {
+                Log.d("AlbumRepositoryImpl", "Álbuns do cache: $cachedAlbum")
+                return Result.success(cachedAlbum)
+            }
+            // 2. Se não estava no Firebase, busca no Spotify
+            Log.d("AlbumRepositoryImpl", "Álbuns não encontrados no cache")
+            val spotifyResult = spotifyDataSource.getAlbumDetails(albumId)
+
+            // 3. Se o Spotify respondeu com sucesso, salva no Firebase para cache
+            if (spotifyResult.isSuccess) {
+                val album = spotifyResult.getOrThrow()
+
+                val lastFmInfo = lastfmRemoteDataSource.getAlbumDetail(
+                    album.artist,
+                    album.title
+                ).getOrNull()
+
+                val rawWiki = lastFmInfo?.wiki?.summary ?: ""
+                val cleanWiki = rawWiki.substringBefore("<a").trim().ifBlank { null }
+                val extractedUrl = if (rawWiki.contains("href=\"")) {
+                    rawWiki.substringAfter("href=\"").substringBefore("\"")
+                    } else null
+
+                // Extrai a resenha (wiki) e os gêneros (tags)
+                val genres = lastFmInfo?.tags?.tag?.map {it.name } ?: emptyList()
+
+                // Consulta o Discogs usando o Artista e Nome que vieram do Spotify
+                val discogsResult = discogsRemoteDataSource.searchMasterRelease(
+                    artist = album.artist,
+                    releaseTitle = album.title
+                ).getOrNull()
+
+                // Pega o primeiro resultado retornado
+                val discogsItem = discogsResult?.results?.firstOrNull()
+
+                val label = discogsItem?.label?.firstOrNull()
+                val format = discogsItem?.format?.firstOrNull()
+                val catalog = discogsItem?.catno
+
+                // Monta o álbum completo com o copy
+                val fullAlbum = album.copy(
+                    wikiSummary = cleanWiki,
+                    genres = genres,
+                    recordLabel = label,
+                    physicalFormat = format,
+                    catalogNumber = catalog,
+                    lastFmUrl = extractedUrl
+                )
+                firebaseDataSource.saveAlbumLocaly(fullAlbum)
+                return Result.success(fullAlbum)
+            } else {
+                return Result.failure(Exception("Erro ao buscar álbum no Spotify"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -23,3 +23,11 @@ Thumbs.db
 *.hprof
 .kotlin
 .vscode
+
+# Chave do Firebase
+app/google-services.json
+
+# Pastas de compilação (nunca devem ir pro Git)
+build/
+app/build/
+.gradle/

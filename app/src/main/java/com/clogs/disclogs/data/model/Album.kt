@@ -10,16 +10,21 @@ data class Album(
     val coverUrl: String = "",
     val releaseYear: String = "",
     val totalTracks: String = "",
+    val type: String = "album",
+
     val averageRating: Double = 0.0,
     val totalRating: Double = 0.0,
     val userRating: Double = 0.0,
-    val type: String = "album",
+    val weeklyCount: Int = 0,
+    val totalReviews: Int = 0,
+    val lastReviewedAt: Long = 0,
+
     val wikiSummary: String? = null,
     val genres: List<String> = emptyList(),
+    val lastFmUrl: String? = null,
+
     val recordLabel: String? = null,
     val catalogNumber: String? = null,
     val physicalFormat: String? = null,
-    val weeklyCount: Int = 0,
-    val totalReviews: Int = 0,
-    val lastReviewedAt: Long = 0
+
 )

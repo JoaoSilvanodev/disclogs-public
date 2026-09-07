@@ -62,7 +62,7 @@ class LibraryViewModel @Inject constructor(
     // 5. Bloco executado automaticamente assim que a ViewModel inicia quando a library é aberta
     init {
         loadLibrary()
-        loadLists()
+      //  loadLists()
     }
 
     private fun loadLibrary() {

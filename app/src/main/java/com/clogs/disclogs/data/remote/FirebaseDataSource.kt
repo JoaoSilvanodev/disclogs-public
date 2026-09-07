@@ -1,10 +1,12 @@
 package com.clogs.disclogs.data.remote
 
+import android.util.Log
 import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.data.model.CommunityActivity
 import com.clogs.disclogs.data.model.Profiles
 import com.clogs.disclogs.data.model.RatingStats
 import com.clogs.disclogs.data.model.Review
+import com.clogs.disclogs.data.model.ReviewRow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -317,19 +319,22 @@ class FirebaseDataSource @Inject constructor(
      */
     suspend fun getLibraryAlbums(userId: String): Result<List<Album>> {
         return try {
+            // 1. Busca todas as reviews onde o campo "userId" bate com o do usuário logado
             val querySnapshot = firestore.collection("reviews")
-                .whereEqualTo("user_id", userId)
+                .whereEqualTo("userId", userId)
                 .get()
                 .await()
 
-            val albumIds = querySnapshot.toObjects(Review::class.java).map { it.albumId }
-            val albums = firestore.collection("albums")
-                .whereIn("id", albumIds)
-                .get()
-                .await()
-                .toObjects(Album::class.java)
+            // 2. Converte os documentos encontrados para a lista de Reviews
+            val reviews = querySnapshot.toObjects(Review::class.java)
+
+            // 3. Pega o objeto album de dentro de cada review
+            val albums = reviews.map { it.album }
+
+            Log.d("AlbumRepositoryImpl", "Álbuns da biblioteca: $albums")
             Result.success(albums)
         } catch (e: Exception) {
+            Log.e("AlbumRepositoryImpl", "Erro ao buscar álbuns da biblioteca: ${e.message}")
             Result.failure(e)
         }
     }
@@ -376,10 +381,36 @@ class FirebaseDataSource @Inject constructor(
 
     }
 
+    /*
+    salva uma copia do album para a coleção albums locais para evitar consultas a API do Spotify
+     */
+    suspend fun saveAlbumLocaly(album: Album): Result<Unit> {
+        return try {
+            val docRef = firestore.collection("albums").document(album.id)
+            docRef.set(album).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-    // =========================================================================
-    // 4. REVIEWS, LIKES E ATIVIDADES (Firestore - Coleções "reviews", "review_likes")
-    // =========================================================================
+    suspend fun getAlbumById(albumId: String): Album? {
+        return try {
+
+            val doc = firestore.collection("albums")
+                .document(albumId)
+                .get()
+                .await()
+
+            doc.toObject(Album::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+// =========================================================================
+// 4. REVIEWS, LIKES E ATIVIDADES (Firestore - Coleções "reviews", "review_likes")
+// =========================================================================
 
     /**
      * Busca a avaliação (Review) de um usuário para um álbum específico.
@@ -404,10 +435,16 @@ class FirebaseDataSource @Inject constructor(
      */
     suspend fun saveInteraction(review: Review): Result<Unit> {
         return try {
+
             val docId = review.id?.toString() ?: firestore.collection("reviews").document().id
             val reviewToSave = review.copy(id = docId.toLongOrNull() ?: System.currentTimeMillis())
 
             firestore.collection("reviews").document(docId).set(reviewToSave).await()
+            Log.d("AlbumRepositoryImpl", "Review salva com sucesso datasource: $review")
+
+            val localAlbum = review.album
+            saveAlbumLocaly(localAlbum)
+
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -521,7 +558,8 @@ class FirebaseDataSource @Inject constructor(
      */
     suspend fun getCommunityActivityById(reviewId: Long): Result<CommunityActivity?> {
         return try {
-            val doc = firestore.collection("community_activity").document(reviewId.toString()).get().await()
+            val doc = firestore.collection("community_activity").document(reviewId.toString()).get()
+                .await()
             val activity = doc.toObject(CommunityActivity::class.java)
             Result.success(activity)
         } catch (e: Exception) {

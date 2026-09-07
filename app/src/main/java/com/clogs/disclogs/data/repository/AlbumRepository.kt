@@ -14,7 +14,7 @@ interface AlbumRepository {
 
     suspend fun saveUserReview(review: Review): Result<Unit>
 
-    suspend fun getAlbumDetails(albumId: String?): Result<Album>
+    suspend fun getAlbumDetails(albumId: String): Result<Album>
 
     suspend fun getTrendingAlbums(): Result<List<Album>>
 

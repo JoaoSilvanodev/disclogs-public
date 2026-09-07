@@ -31,7 +31,19 @@ class LastfmRemoteDataSource(
     }
 
     suspend fun getAlbumDetail(artist: String, albumName: String): Result<LastFmAlbumDetailsDto?> {
-        TODO()
-
+        return try {
+            val response = apiService.getAlbumInfo(
+                apiKey = apiKey,
+                artist = artist,
+                albumName = albumName
+            )
+            if (response.isSuccessful) {
+                Result.success(response.body()?.album)
+            } else {
+                Result.failure(Exception("Erro ao buscar detalhes do álbum ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
