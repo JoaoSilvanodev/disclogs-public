@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.ui.screens.search.SearchViewModel
 
 
@@ -47,7 +48,7 @@ fun GenericSearch(
     viewModel: SearchViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onQueryChange: (String) -> Unit = {},
-    onAlbumClick: (String) -> Unit,
+    onAlbumClick: (Album) -> Unit,
     searchType: String? = null
 
 ) {
@@ -145,7 +146,7 @@ fun GenericSearch(
                         AlbumListItem(
                             album = album,
                             onAlbumClick = {
-                                onAlbumClick(album.id)
+                                onAlbumClick(album)
                             }
                         )
                     }

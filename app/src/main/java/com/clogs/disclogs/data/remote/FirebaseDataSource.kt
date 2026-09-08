@@ -7,8 +7,10 @@ import com.clogs.disclogs.data.model.Profiles
 import com.clogs.disclogs.data.model.RatingStats
 import com.clogs.disclogs.data.model.Review
 import com.clogs.disclogs.data.model.ReviewRow
+import com.clogs.disclogs.data.model.UserList
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
@@ -584,4 +586,87 @@ class FirebaseDataSource @Inject constructor(
         }
     }
 
+// =========================================================================
+// 5. List
+// =========================================================================
+
+    suspend fun createList(list: UserList): Result<Unit> {
+        return try {
+            val docref = if (list.id.isNotBlank()) {
+                firestore.collection("lists").document(list.id)
+            } else {
+                firestore.collection("lists").document()
+            }
+            val listSave = list.copy(id = docref.id)
+            docref.set(listSave).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+
+
+    suspend fun getAllLists(userId: String): Result<List<UserList>> {
+        return try {
+
+            val querySnapshot = firestore.collection("lists")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+            val lists = querySnapshot.toObjects(UserList::class.java)
+            Result.success(lists)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
+    }
+
+    suspend fun saveList(list: UserList): Result<Unit> {
+        return try {
+            firestore.collection("lists").document(list.id).set(list).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getListById(listId: String): Result<UserList?> {
+        return try {
+            val doc = firestore.collection("lists").document(listId).get().await()
+            val list = doc.toObject(UserList::class.java)
+            Result.success(list)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateList(list: UserList): Result<Unit> {
+        return try {
+            firestore.collection("lists").document(list.id).set(list).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteList(listId: String): Result<Unit> {
+        return try {
+
+            firestore.collection("lists")
+                .document(listId)
+                .delete()
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteAlbumFromList(listId: String, albumId: String): Result<Unit> {
+        TODO()
+    }
 }

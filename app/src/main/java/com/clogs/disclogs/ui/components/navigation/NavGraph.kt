@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.clogs.disclogs.MainActivity
+import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.ui.components.GenericSearch
 import com.clogs.disclogs.ui.screens.auth.AuthScreen
 import com.clogs.disclogs.ui.screens.auth.AuthViewModel
@@ -133,9 +134,10 @@ fun NavGraph(
             GenericSearch(
                 onBackClick = { navController.popBackStack() },
                 searchType = "Album",
-                onAlbumClick = { albumId ->
-                    libraryViewModel.addAlbumToList(albumId, listId)
-                    navController.popBackStack()
+                onAlbumClick = { album ->
+                    libraryViewModel.addAlbumToList(listId, album) {
+                        navController.popBackStack()
+                    }
                 }
             )
         }

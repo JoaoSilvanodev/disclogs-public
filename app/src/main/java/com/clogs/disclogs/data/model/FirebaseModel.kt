@@ -95,18 +95,13 @@ data class ProfileBasicInfo(
 )
 
 @Serializable
-data class UserLists(
+data class UserList(
     val id: String = "",
-    @SerialName("user_id") val userId: String = "",
-    val name: String,
-    val description: String,
-    @SerialName("created_at") val createdAt: String? = null,
-)
-
-@Serializable
-data class ListItem(
-    val id: Long = 0,
-    @SerialName("list_id") val listId: String,
-    @SerialName("album_id") val albumId: String,
-    @SerialName("added_at") val addedAt: String? = null
+    val userId: String = "",
+    val name: String = "",
+    val description: String? = null,
+    val createdAt: String? = null,
+    val albums: List<Album> = emptyList(),
+    val isPrivate: Boolean = false,
+    val tags: List<String?> = emptyList()
 )

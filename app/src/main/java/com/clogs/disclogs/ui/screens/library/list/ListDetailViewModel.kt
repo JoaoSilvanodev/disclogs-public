@@ -4,10 +4,10 @@ package com.clogs.disclogs.ui.screens.library.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clogs.disclogs.data.model.Album
-import com.clogs.disclogs.data.model.UserLists
+import com.clogs.disclogs.data.model.UserList
 import com.clogs.disclogs.data.repository.ListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,16 +16,14 @@ import kotlinx.coroutines.launch
 
 data class ListUiState(
     val isLoading: Boolean = false,
-    val listDetails: UserLists? = null,
+    val listDetails: UserList? = null,
     val albums: List<Album> = emptyList(),
     val errorMessage: String? = null
 )
 
 
 @HiltViewModel
-class ListViewModel @Inject constructor(
-    private val listRepository: ListRepository
-) : ViewModel() {
+class ListViewModel @Inject constructor(private val listRepository: ListRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = _uiState.asStateFlow()
@@ -34,28 +32,21 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val detailsResult =
-                listRepository.getListDetails(listId) // Carrega os detalhes da lista
-            val albumResult = listRepository.getListAlbums(listId) // Carrega os álbuns da lista
+            val result = listRepository.getListById(listId)
 
-            if (albumResult.isSuccess && albumResult.isSuccess) {
+            result.onSuccess { list ->
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        listDetails = detailsResult.getOrNull(),
-                        albums = albumResult.getOrNull() ?: emptyList()
+                        listDetails = list,
+                        albums = list?.albums ?: emptyList()
                     )
                 }
-            } else {
-                val error = detailsResult.exceptionOrNull()?.message
-                    ?: albumResult.exceptionOrNull()?.message
-                    ?: "Erro desconhecido"
-
+            }.onFailure { error ->
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Erro ao carregar a lista $error"
-
+                        errorMessage = error.message
                     )
                 }
             }

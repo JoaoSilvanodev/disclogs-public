@@ -7,7 +7,7 @@ import com.clogs.disclogs.data.model.Review
 
 interface AlbumRepository {
 
-    fun getCurrentUserId(): String?
+    fun getCurrentUserId(): String
 
     // Busca álbuns pelo nome retornando uma lista de álbuns
     suspend fun searchAlbums(query: String, tipo: String): Result<List<Album>>
