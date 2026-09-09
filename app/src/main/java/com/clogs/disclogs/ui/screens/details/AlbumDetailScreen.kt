@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,11 +53,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.clogs.disclogs.R
 import com.clogs.disclogs.ui.components.ActivityItem
 import com.clogs.disclogs.ui.components.RatingHistogramSection
+import com.clogs.disclogs.R
 
 import com.clogs.disclogs.ui.theme.DisclogsTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AlbumDetailScreen(
@@ -68,6 +71,7 @@ fun AlbumDetailScreen(
 
     val context = LocalContext.current
 
+
     // O LaunchedEffect roda esse bloco de código UMA ÚNICA VEZ quando a tela abre
     LaunchedEffect(albumId) {
         viewModel.loadAlbumDetail(albumId)
@@ -75,7 +79,7 @@ fun AlbumDetailScreen(
 
     LaunchedEffect(state.saveSuccess) {
         if (state.saveSuccess) {
-            Toast.makeText(context, context.getString(R.string.review_saved_success), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.review_saved_success, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -97,7 +101,7 @@ fun AlbumDetailContent(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-
+    val uriHandler = LocalUriHandler.current
 
 
     Scaffold(
@@ -133,7 +137,7 @@ fun AlbumDetailContent(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            //! ITEM 1: A Capa Gigante (Mantido igual)
+
             item {
                 Box(
                     modifier = Modifier
@@ -142,7 +146,10 @@ fun AlbumDetailContent(
                 ) {
                     AsyncImage(
                         model = state.coverUrl,
-                        contentDescription = stringResource(R.string.cd_album_cover, state.albumTitle),
+                        contentDescription = stringResource(
+                            R.string.cd_album_cover,
+                            state.albumTitle
+                        ),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -163,7 +170,7 @@ fun AlbumDetailContent(
                 }
             }
 
-            //! ITEM 2: Cabeçalho, Botão e Notas
+
             item {
                 Column(
                     modifier = Modifier
@@ -185,7 +192,7 @@ fun AlbumDetailContent(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "${state.releaseYear} · ${stringResource(R.string.tracks)}: ${state.totalTracks}",
+                        text = "${(state.releaseYear).split("-")[0]} · ${stringResource(R.string.tracks)}: ${state.totalTracks}",
                         color = Color.Gray,
                         fontSize = 12.sp,
                         letterSpacing = 1.sp
@@ -217,7 +224,9 @@ fun AlbumDetailContent(
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (state.inLibrary) stringResource(R.string.album_reviewed_log_again) else stringResource(R.string.album_add_to_library),
+                            text = if (state.inLibrary) stringResource(R.string.album_reviewed_log_again) else stringResource(
+                                R.string.album_add_to_library
+                            ),
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                             color = MaterialTheme.colorScheme.onPrimary
@@ -257,9 +266,11 @@ fun AlbumDetailContent(
                         letterSpacing = 1.5.sp
                     )
                     Spacer(modifier = Modifier.height(12.dp))
+
                     state.wikiSummary?.let { text ->
 
                         var isExpanded by remember { mutableStateOf(false) }
+
                         Text(
                             text = text,
                             color = Color.Gray,
@@ -268,11 +279,27 @@ fun AlbumDetailContent(
                             maxLines = if (isExpanded) Int.MAX_VALUE else 4,
                             overflow = TextOverflow.Ellipsis
                         )
+                        Spacer(modifier = Modifier.height(6.dp))
 
-                        if  (text.length > 150) {
+                        state.lastFmUrl?.let { url ->
+                            Text(
+                                text = stringResource(R.string.lastFmReadMore),
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp,
+                                modifier = Modifier.clickable {
+                                    uriHandler.openUri(url)
+                                }
+
+                            )
+                        }
+
+                        if (text.length > 150) {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = if (isExpanded) stringResource(R.string.album_read_less) else stringResource(R.string.album_read_more),
+                                text = if (isExpanded) stringResource(R.string.album_read_less) else stringResource(
+                                    R.string.album_read_more
+                                ),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp,
@@ -342,7 +369,8 @@ fun AlbumDetailContent(
                             Spacer(modifier = Modifier.height(2.dp))
 
                             Text(
-                                text = state.physicalFormat ?: stringResource(R.string.album_digital),
+                                text = state.physicalFormat
+                                    ?: stringResource(R.string.album_digital),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp
                             )
@@ -373,8 +401,27 @@ fun AlbumDetailContent(
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            val yearText =
-                                if (state.releaseYear.isNotBlank()) "℗ ${state.releaseYear}" else "-"
+                            val formattedDate = try {
+                                if (state.releaseYear.isNotBlank()) {
+                                    if (state.releaseYear.length == 10) {
+                                        val date = LocalDate.parse(
+                                            state.releaseYear,
+                                            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                        )
+                                        date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+
+                                    } else {
+                                        state.releaseYear
+                                    }
+                                } else {
+                                    null
+                                }
+                            } catch (e: Exception) {
+                                state.releaseYear.ifBlank { null }
+                            }
+
+                            val yearText = formattedDate ?: "-"
+
                             Text(
                                 yearText,
                                 color = MaterialTheme.colorScheme.onBackground,

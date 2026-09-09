@@ -1,25 +1,25 @@
 package com.clogs.disclogs.data.repository
 
-import com.clogs.disclogs.data.remote.FirebaseDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseAuthDataSource
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val firebaseDataSource: FirebaseDataSource
+    private val authDataSource: FirebaseAuthDataSource
 ) : AuthRepository {
 
     override suspend fun registerUser(email: String,password: String,nomeCompleto: String,nick: String): Result<Unit> {
-        val result = firebaseDataSource.signUp(email, password, nick)
+        val result = authDataSource.signUp(email, password, nick)
         return if (result.isSuccess) Result.success(Unit) else Result.failure(result.exceptionOrNull() ?: Exception("Erro no cadastro"))
     }
 
     override suspend fun loginWithEmail(email: String, password: String): Result<Unit> {
-        val result = firebaseDataSource.signIn(email, password)
+        val result = authDataSource.signIn(email, password)
         return if (result.isSuccess) Result.success(Unit) else Result.failure(result.exceptionOrNull() ?: Exception("Erro no login"))
     }
 
 
     override suspend fun loginWithGoogle(idToken: String): Result<Unit> {
-        val result = firebaseDataSource.signWithGoogle(idToken)
+        val result = authDataSource.signWithGoogle(idToken)
         return if (result.isSuccess)
             Result.success(Unit)
         else Result.failure(result.exceptionOrNull() ?:
@@ -40,7 +40,7 @@ class AuthRepositoryImpl @Inject constructor(
 
 
     override fun isUserLoggedIn(): Boolean {
-        return firebaseDataSource.getCurrentUser() != null
+        return authDataSource.getCurrentUser() != null
     }
 
     override suspend fun logout(): Result<Unit> {

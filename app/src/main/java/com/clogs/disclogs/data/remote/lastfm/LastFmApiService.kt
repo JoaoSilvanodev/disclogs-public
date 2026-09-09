@@ -23,5 +23,5 @@ interface LastFmApiService {
         @Query("album") albumName: String,
         @Query("autocorrect") autoCorrect: Int = 1,
         @Query("format") format: String = "json"
-    ): Response<LastFmSearchResponse>
+    ): Response<LastFmAlbumInfoResponse>
 }

@@ -102,7 +102,7 @@
     <string name="auth_full_name_label">NOME COMPLETO</string>
     <string name="auth_full_name_placeholder">nome</string>
     <string name="auth_username_label">USERNAME</string>
-    <string name="auth_username_placeholder">@seu_nick</string>
+    <string name="auth_username_placeholder">\@seu_nick</string>
     <string name="auth_email_label">E-MAIL</string>
     <string name="auth_email_placeholder">digite seu e-mail</string>
     <string name="auth_password_label">SENHA</string>
@@ -186,14 +186,15 @@
     <string name="year_placeholder">Year</string>
 
     <string name="album_catalog">CATALOG</string>
-    <string name="album_copyright">COPYRIGHT</string>
+    <string name="album_copyright">RELEASE DATE</string>
     <string name="album_reviews">REVIEWS</string>
     <string name="album_no_reviews">Ainda não há reviews para este álbum.</string>
     <string name="album_be_first_to_review">Seja o primeiro a avaliar!</string>
     <string name="album_digital">Digital</string>
     <string name="library_empty">Sua biblioteca está vazia.</string>
     <string name="review_save_button">SAVE REVIEW</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="home_collector_tip_content">The first pressing of \'Visions of Dust\' is currently seeing a 42% surge in marketplace value.</string>
     <string name="library_empty_lists">\"Você ainda não criou nenhuma lista.\"</string>
+    <string name="lastFmReadMore">Ler mais na Last.fm ↗</string>
 </resources>

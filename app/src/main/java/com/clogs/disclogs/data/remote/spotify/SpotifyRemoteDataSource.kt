@@ -25,11 +25,19 @@ class SpotifyRemoteDataSource(private val apiService: SpotifyApiService) {
         return try {
             val token = getValidToken()
 
+            // Normaliza o tipo para a API do Spotify (album, artist, track)
+            val spotifyType = when {
+                type.contains("album", ignoreCase = true) || type.contains("álbum", ignoreCase = true) -> "album"
+                type.contains("artist", ignoreCase = true) || type.contains("artista", ignoreCase = true) -> "artist"
+                type.contains("track", ignoreCase = true) || type.contains("faixa", ignoreCase = true) -> "track"
+                else -> "album,artist,track"
+            }
+
             // mandando o type pro Retrofit
             val response = apiService.searchAlbuns(
                 bearerToken = "Bearer $token",
                 query = query,
-                type = "album,artist,track"
+                type = spotifyType
             )
 
             val albunsMap = mutableListOf<Album>()

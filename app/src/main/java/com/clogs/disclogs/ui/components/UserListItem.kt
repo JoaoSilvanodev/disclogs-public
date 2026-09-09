@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,15 +23,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clogs.disclogs.data.model.UserLists
+import coil.compose.AsyncImage
+import com.clogs.disclogs.data.model.UserList
 
 @Composable
 fun UserListItem(
-    userList: UserLists,
+    userList: UserList,
     onClick: () -> Unit
 ) {
     Row(
@@ -40,7 +43,7 @@ fun UserListItem(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // "Capa" provisória da Lista (Quadrado com ícone)
+        // "Capa" da Lista (Capa do 1º álbum ou ícone padrão)
         Box(
             modifier = Modifier
                 .size(64.dp)
@@ -48,12 +51,22 @@ fun UserListItem(
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.PlaylistPlay,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(32.dp)
-            )
+            val firstCover = userList.albums.firstOrNull()?.coverUrl
+            if (!firstCover.isNullOrBlank()) {
+                AsyncImage(
+                    model = firstCover,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.PlaylistPlay,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.width(16.dp))

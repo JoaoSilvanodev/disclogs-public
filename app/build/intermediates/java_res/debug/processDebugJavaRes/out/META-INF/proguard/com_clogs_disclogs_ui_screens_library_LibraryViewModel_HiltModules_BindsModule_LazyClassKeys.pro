@@ -1,1 +1,0 @@
--keep,allowobfuscation,allowshrinking class com.clogs.disclogs.ui.screens.library.LibraryViewModel

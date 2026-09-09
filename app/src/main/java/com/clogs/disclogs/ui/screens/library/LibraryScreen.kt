@@ -72,6 +72,7 @@ import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.ui.components.UserListItem
 import com.clogs.disclogs.ui.components.placeholders.AlbumPlaceholder
 import com.clogs.disclogs.ui.theme.DisclogsTheme
+import java.lang.reflect.Modifier.isPrivate
 
 @Composable
 fun LibraryScreen(
@@ -517,7 +518,9 @@ fun CreateListDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name, description) },
+                onClick = { onConfirm(
+                    name, description
+                ) },
                 enabled = name.isNotBlank()
             ) {
                 Text("Criar")

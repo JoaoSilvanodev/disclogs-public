@@ -41,8 +41,7 @@ fun Top4BottomSheetContent(
     onSaveClick: (List<Album>) -> Unit,
     onCancelClick: () -> Unit
 ) {
-    // 1. O pulo do gato do Compose! Se a initialSelection mudar vindo da ViewModel,
-    // o remember normal não avisa a tela. Usamos uma variável de estado simples.
+
     var selectedAlbums by remember { mutableStateOf(initialSelection) }
     var searchQuery by remember { mutableStateOf("") }
 

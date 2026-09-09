@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.clogs.disclogs.ui.screens.library.LibraryGridItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,15 +52,25 @@ fun ListDetailScreen(
     onAlbumClick: (String) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(listId) {
-        viewModel.loadList(listId)
+    // Carrega a lista quando o ID da lista é fornecido
+    DisposableEffect(lifecycleOwner, listId) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.loadList(listId)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalhes da Lista") },
+                title = { Text(state.listDetails?.name?.ifBlank { "Detalhes da Lista" } ?: "Detalhes da Lista") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
@@ -99,12 +111,20 @@ fun ListDetailScreen(
                     ) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Column(modifier = Modifier.fillMaxWidth()) {
-                                if (!state.listDetails!!.description.isNotBlank()) {
+                                if (!state.listDetails?.description.isNullOrBlank()) {
                                     Text(
                                         text = state.listDetails!!.description!!,
                                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                                        fontSize = 14.sp,
+                                        modifier = Modifier.padding(bottom = 12.dp)
+                                    )
+                                }
+                                if (state.albums.isEmpty()) {
+                                    Text(
+                                        text = "Nenhum álbum adicionado",
                                         fontSize = 16.sp,
-                                        modifier = Modifier.padding(bottom = 16.dp)
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        modifier = Modifier.padding(bottom = 12.dp)
                                     )
                                 }
                                 Button(
