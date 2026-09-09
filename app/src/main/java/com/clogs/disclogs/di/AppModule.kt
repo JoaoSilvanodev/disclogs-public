@@ -1,7 +1,11 @@
 package com.clogs.disclogs.di
 
 import com.clogs.disclogs.BuildConfig
-import com.clogs.disclogs.data.remote.FirebaseDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseAlbumDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseAuthDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseListDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseProfileDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseReviewDataSource
 import com.clogs.disclogs.data.remote.discogs.DiscogsRemoteDataSource
 import com.clogs.disclogs.data.remote.lastfm.LastfmRemoteDataSource
 import com.clogs.disclogs.data.remote.spotify.SpotifyRemoteDataSource
@@ -39,13 +43,47 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseDataSource(
+    fun provideFirebaseAuthDataSource(
         auth: FirebaseAuth,
         firestore: FirebaseFirestore
-    ): FirebaseDataSource {
-        return FirebaseDataSource(auth, firestore)
+    ): FirebaseAuthDataSource {
+        return FirebaseAuthDataSource(auth, firestore)
     }
 
+    @Provides
+    @Singleton
+    fun provideFirebaseProfileDataSource(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): FirebaseProfileDataSource {
+        return FirebaseProfileDataSource(auth, firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAlbumDataSource(
+        firestore: FirebaseFirestore
+    ): FirebaseAlbumDataSource {
+        return FirebaseAlbumDataSource(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseReviewDataSource(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        albumDataSource: FirebaseAlbumDataSource
+    ): FirebaseReviewDataSource {
+        return FirebaseReviewDataSource(auth, firestore, albumDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseListDataSource(
+        firestore: FirebaseFirestore
+    ): FirebaseListDataSource {
+        return FirebaseListDataSource(firestore)
+    }
 
     @Provides
     @Singleton
@@ -75,14 +113,18 @@ object AppModule {
     @Singleton
     fun provideAlbumRepository(
         spotifyRemoteDataSource: SpotifyRemoteDataSource,
-        firebaseDataSource: FirebaseDataSource,
         lastfmRemoteDataSource: LastfmRemoteDataSource,
+        authDataSource: FirebaseAuthDataSource,
+        albumDataSource: FirebaseAlbumDataSource,
+        reviewDataSource: FirebaseReviewDataSource,
         discogsRemoteDataSource: DiscogsRemoteDataSource
     ): AlbumRepository {
         return AlbumRepositoryImpl(
             spotifyRemoteDataSource,
             lastfmRemoteDataSource,
-            firebaseDataSource,
+            authDataSource,
+            albumDataSource,
+            reviewDataSource,
             discogsRemoteDataSource
         )
     }
@@ -90,26 +132,30 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        firebaseDataSource: FirebaseDataSource
+        authDataSource: FirebaseAuthDataSource
     ): AuthRepository {
-        return AuthRepositoryImpl(firebaseDataSource)
+        return AuthRepositoryImpl(authDataSource)
     }
-
 
     @Provides
     @Singleton
-    fun provideProfileRepository(firebaseDataSource: FirebaseDataSource): ProfileRepository {
-        return ProfileRepositoryImpl(firebaseDataSource)
+    fun provideProfileRepository(
+        profileDataSource: FirebaseProfileDataSource,
+        reviewDataSource: FirebaseReviewDataSource
+    ): ProfileRepository {
+        return ProfileRepositoryImpl(profileDataSource, reviewDataSource)
     }
 
     @Provides
     @Singleton
     fun provideListRepository(
-        firebaseDataSource: FirebaseDataSource,
+        listDataSource: FirebaseListDataSource,
+        albumDataSource: FirebaseAlbumDataSource,
         spotifyRemoteDataSource: SpotifyRemoteDataSource
     ): ListRepository {
         return ListRepositoryImpl(
-            firebaseDataSource,
+            listDataSource,
+            albumDataSource,
             spotifyRemoteDataSource
         )
     }

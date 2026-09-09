@@ -32,7 +32,7 @@ data class AlbumDetailUiState(
     var isFavorite: Boolean = false,
     var isLogged: Boolean = false,
     val errorMessage: String? = null,
-    val inLibrary: Boolean  = false,
+    val inLibrary: Boolean = false,
     val reviewId: String? = null,
     val saveSuccess: Boolean = false,
     val avgRating: Double = 0.0,
@@ -53,7 +53,8 @@ data class AlbumDetailUiState(
 )
 
 @HiltViewModel
-class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepository) : ViewModel() {
+class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepository) :
+    ViewModel() {
 
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
@@ -122,9 +123,9 @@ class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepo
         favorite: Boolean
     ) {
         viewModelScope.launch {
-            val userId = repository.getCurrentUserId()
+            val userId = runCatching { repository.getCurrentUserId() }.getOrNull()
             if (userId == null) {
-                _uiState.update { it.copy(errorMessage = "Você precisa estar logado para avaliar." ) }
+                _uiState.update { it.copy(errorMessage = "Você precisa estar logado para avaliar.") }
                 return@launch
             }
 
@@ -133,28 +134,31 @@ class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepo
             // montar um objeto album a partir do uistate dos detalhes e colocar esse album completo na resposta da review
 
             val album = Album(
-                    id = _uiState.value.albumId,
-                    title = _uiState.value.albumTitle,
-                    artist = _uiState.value.artistName,
-                    coverUrl = _uiState.value.coverUrl,
-                    releaseYear = _uiState.value.releaseYear,
-                    totalTracks = _uiState.value.totalTracks,
-                    userRating = _uiState.value.userRating,
-                    wikiSummary = _uiState.value.wikiSummary,
-                    genres = _uiState.value.genre,
-                    recordLabel = _uiState.value.recordLabel,
-                    catalogNumber = _uiState.value.catalogNumber,
-                    physicalFormat = _uiState.value.physicalFormat,
-                    averageRating = _uiState.value.avgRating,
-                    totalRating = _uiState.value.countRating.toDouble(),
-                    weeklyCount = 0,
-                    totalReviews = _uiState.value.countRating,
-                    lastReviewedAt = System.currentTimeMillis()
+                id = _uiState.value.albumId,
+                title = _uiState.value.albumTitle,
+                artist = _uiState.value.artistName,
+                coverUrl = _uiState.value.coverUrl,
+                releaseYear = _uiState.value.releaseYear,
+                totalTracks = _uiState.value.totalTracks,
+                userRating = _uiState.value.userRating,
+                wikiSummary = _uiState.value.wikiSummary,
+                genres = _uiState.value.genre,
+                recordLabel = _uiState.value.recordLabel,
+                catalogNumber = _uiState.value.catalogNumber,
+                physicalFormat = _uiState.value.physicalFormat,
+                averageRating = _uiState.value.avgRating,
+                totalRating = _uiState.value.countRating.toDouble(),
+                weeklyCount = 0,
+                totalReviews = _uiState.value.countRating,
+                lastReviewedAt = System.currentTimeMillis()
             )
+
 
             val newReview = Review(
                 userId = userId,
-                album = album,
+                albumId = album.id,
+                albumTitle = album.title,
+                coverUrl = album.coverUrl,
                 rating = rating,
                 comment = text,
                 isFavorite = favorite,
@@ -162,6 +166,8 @@ class AlbumDetailViewModel @Inject constructor(private val repository: AlbumRepo
                 listenDate = diaryDateMillis,
                 datePrecision = precision
             )
+
+
 
             repository.saveUserReview(newReview)
         }

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.clogs.disclogs.R
 import com.clogs.disclogs.data.model.Album
+import com.clogs.disclogs.ui.theme.DisclogsTheme
 
 
 // responsável por desenhar apenas uma linha da nossa lista de resultados
@@ -92,7 +93,8 @@ fun AlbumListItem(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    val anoParaExibir = album.releaseYear.ifBlank { stringResource(R.string.year_placeholder) }
+                    val formatYear = (album.releaseYear).split("-")[0]
+                    val anoParaExibir = formatYear.ifBlank { stringResource(R.string.year_placeholder) }
 
                     Text(
                         text = "$anoParaExibir • ${album.type}",
@@ -108,7 +110,6 @@ fun AlbumListItem(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End
                     ) {
-                        StarRating(rating = album.averageRating)
 
                         Spacer(modifier = Modifier.width(6.dp))
 
@@ -166,4 +167,21 @@ fun RecentAlbumItem(
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun AlbumListItemPreview() {
+    DisclogsTheme {
+        AlbumListItem(
+            album = Album(
+                id = "1",
+                title = "The Dark Side of the Moon",
+                artist = "Pink Floyd",
+                coverUrl = "https://example.com/cover.jpg",
+                releaseYear = "1973",
+                type = "Album",
+                averageRating = 4.8
+            ),
+            onAlbumClick = {}
+        )
+    }
+}

@@ -9,7 +9,6 @@ import com.clogs.disclogs.data.repository.AuthRepository
 import com.clogs.disclogs.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -114,9 +113,8 @@ class SettingsViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             _uiState.update { it.copy(isSearching = true, searchError = null) }
-            delay(500)
 
-            val resultados = albumRepository.searchAlbums(query, "Album")
+            val resultados = albumRepository.searchAlbums(query, "album")
 
             resultados.onSuccess { listaAlbuns ->
                 _uiState.update {

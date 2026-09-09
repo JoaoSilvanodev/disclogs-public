@@ -6,36 +6,44 @@ import com.clogs.disclogs.data.model.Album
 import com.clogs.disclogs.data.model.CommunityActivity
 import com.clogs.disclogs.data.model.RatingStats
 import com.clogs.disclogs.data.model.Review
-
-import com.clogs.disclogs.data.remote.FirebaseDataSource
 import com.clogs.disclogs.data.remote.discogs.DiscogsRemoteDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseAlbumDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseAuthDataSource
+import com.clogs.disclogs.data.remote.firebase.FirebaseReviewDataSource
 import com.clogs.disclogs.data.remote.lastfm.LastfmRemoteDataSource
 import com.clogs.disclogs.data.remote.spotify.SpotifyRemoteDataSource
-import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class AlbumRepositoryImpl @Inject constructor(
 
     private val spotifyDataSource: SpotifyRemoteDataSource,
     private val lastfmRemoteDataSource: LastfmRemoteDataSource,
-    private val firebaseDataSource: FirebaseDataSource,
+    private val authDataSource: FirebaseAuthDataSource,
+    private val albumDataSource: FirebaseAlbumDataSource,
+    private val reviewDataSource: FirebaseReviewDataSource,
     private val discogsRemoteDataSource: DiscogsRemoteDataSource
 
 ) : AlbumRepository {
 
     override fun getCurrentUserId(): String {
-        return firebaseDataSource.getCurrentUser() ?: throw Exception("Usuário não encontrado")
+        return authDataSource.getCurrentUser() ?: throw Exception("Usuário não encontrado")
     }
 
     override suspend fun searchAlbums(query: String, tipo: String): Result<List<Album>> {
-        return spotifyDataSource.searchAlbuns(query, tipo)
+        return try {
+            spotifyDataSource.searchAlbuns(query, tipo)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun saveUserReview(review: Review): Result<Unit> {
         return try {
-            firebaseDataSource.saveInteraction(review)
-            Log.d("AlbumRepositoryImpl", "Review salva com sucesso repository: $review")
-            Result.success(Unit)
+
+            val album = albumDataSource.getAlbumById(review.albumId)
+                ?: return Result.failure(Exception("Álbum não encontrado"))
+            
+            reviewDataSource.saveInteraction(review, album)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -45,7 +53,7 @@ class AlbumRepositoryImpl @Inject constructor(
         return try {
 
             // 1. Tenta pegar do cache do Firebase primeiro
-            val cachedAlbum = firebaseDataSource.getAlbumById(albumId)
+            val cachedAlbum = albumDataSource.getAlbumById(albumId)
 
             if (cachedAlbum != null) {
                 Log.d("AlbumRepositoryImpl", "Álbuns do cache: $cachedAlbum")
@@ -68,10 +76,10 @@ class AlbumRepositoryImpl @Inject constructor(
                 val cleanWiki = rawWiki.substringBefore("<a").trim().ifBlank { null }
                 val extractedUrl = if (rawWiki.contains("href=\"")) {
                     rawWiki.substringAfter("href=\"").substringBefore("\"")
-                    } else null
+                } else null
 
                 // Extrai a resenha (wiki) e os gêneros (tags)
-                val genres = lastFmInfo?.tags?.tag?.map {it.name } ?: emptyList()
+                val genres = lastFmInfo?.tags?.tag?.map { it.name } ?: emptyList()
 
                 // Consulta o Discogs usando o Artista e Nome que vieram do Spotify
                 val discogsResult = discogsRemoteDataSource.searchMasterRelease(
@@ -95,7 +103,7 @@ class AlbumRepositoryImpl @Inject constructor(
                     catalogNumber = catalog,
                     lastFmUrl = extractedUrl
                 )
-                firebaseDataSource.saveAlbumLocaly(fullAlbum)
+                albumDataSource.saveAlbumLocaly(fullAlbum)
                 return Result.success(fullAlbum)
             } else {
                 return Result.failure(Exception("Erro ao buscar álbum no Spotify"))
@@ -106,24 +114,24 @@ class AlbumRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTrendingAlbums(): Result<List<Album>> {
-        return firebaseDataSource.getTrendingAlbums()
+        return albumDataSource.getTrendingAlbums()
     }
 
     override suspend fun getLibraryAlbums(): Result<List<Album>> {
-        return firebaseDataSource.getLibraryAlbums(getCurrentUserId())
+        return albumDataSource.getLibraryAlbums(getCurrentUserId())
     }
 
     override suspend fun getUserReview(albumId: String): Result<Review?> {
         val userId = getCurrentUserId()
-        return firebaseDataSource.getUserInteraction(userId, albumId)
+        return reviewDataSource.getUserInteraction(userId, albumId)
     }
 
     override suspend fun getAverageRating(albumId: String): Result<Pair<Double, Int>> {
-        return firebaseDataSource.getAverageRating(albumId)
+        return albumDataSource.getAverageRating(albumId)
     }
 
     override suspend fun getAlbumRatingStats(albumId: String): Result<RatingStats> {
-        return firebaseDataSource.getAlbumRatingStats(albumId)
+        return albumDataSource.getAlbumRatingStats(albumId)
     }
 
     override suspend fun getArtistDetails(artistId: String): Result<Album> {
@@ -135,11 +143,11 @@ class AlbumRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCommunityActivity(): Result<List<CommunityActivity>> {
-        return firebaseDataSource.getFriendActivity()
+        return reviewDataSource.getFriendActivity()
     }
 
     override suspend fun getReviewsByAlbum(albumId: String): Result<List<CommunityActivity>> {
-        return firebaseDataSource.getReviewsByAlbumId(albumId)
+        return reviewDataSource.getReviewsByAlbumId(albumId)
     }
 }
 

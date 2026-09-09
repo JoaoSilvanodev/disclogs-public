@@ -1,68 +1,65 @@
 package com.clogs.disclogs.data.model
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Profiles(
     val id: String,
-    @SerialName("full_name") val fullName: String? = null,
+    val fullName: String? = null,
     val username: String,
-    @SerialName("avatar_url") val avatarUrl: String? = null,
+    val avatarUrl: String? = null,
     val bio: String? = null,
-    @SerialName("top_4_albums") val top4: List<Album>? = null,
-    @SerialName("fcm_token") val fcmToken: String? = null
+    val top4: List<Album>? = null,
+    val fcmToken: String? = null
 )
 
 @Serializable
 data class Review(
     val id: Long? = null,
     val userId: String = "",
-    val album: Album = Album(),
-    val rating: Double? = null,
+    val albumId: String = "",
+    val albumTitle: String = "",
+    val coverUrl: String = "",
     val comment: String? = null,
-    val createdAt: String? = null,
+    val rating: Double? = null,
     val isFavorite: Boolean = false,
+    val datePrecision: String = "EXACT",
+    val createdAt: String = System.currentTimeMillis().toString(),
     val isLogged: Boolean = false,
     val listenDate: Long? = null,
-    val datePrecision: String = "EXACT"
-)
+
+    )
 
 @Serializable
 data class TrendingAlbums(
-    @SerialName("album_id") val albumId: String,
-    @SerialName("average_rating") val averageRating: Double,
-    @SerialName("total_reviews") val totalReviews: Int
-)
-
-@Serializable
-data class ReviewRow(
-    @SerialName("id") val albumId: String
+    val albumId: String,
+    val averageRating: Double,
+    val totalReviews: Int
 )
 
 // lista de IDs de quem o usuário segue
 @Serializable
 data class FollowingId(
-    @SerialName("following_id") val followingId: String
+    val followingId: String
 )
 
 
 @Serializable
 data class FriendActivity(
     val id: Long,
-    @SerialName("user_id") val userId: String,
-    @SerialName("album_id") val albumId: String,
+    val userId: String,
+    val albumId: String,
     val rating: Float? = null,
     val comment: String? = null,
-    @SerialName("created_at") val createdAt: String,
+    val createdAt: String,
     val profiles: FriendProfile? = null
 )
 
 @Serializable
 data class FriendProfile(
     val username: String,
-    @SerialName("full_name") val fullName: String? = null,
-    @SerialName("avatar_url") val avatarUrl: String? = null
+    val fullName: String? = null,
+    val avatarUrl: String? = null
 )
 
 @Serializable
@@ -77,12 +74,12 @@ data class RatingStats(
 @Serializable
 data class CommunityActivity(
     val id: Long,
-    @SerialName("album_id") val albumId: String,
+    val albumId: String,
     val rating: Double? = null,
     val comment: String? = null,
-    @SerialName("created_at") val createdAt: String,
-    @SerialName("likes_count") val likesCount: Int = 0,
-    @SerialName("comments_count") val commentsCount: Int = 0,
+    val createdAt: String,
+    val likesCount: Int = 0,
+    val commentsCount: Int = 0,
     val profiles: ProfileBasicInfo? = null
 )
 
@@ -90,8 +87,8 @@ data class CommunityActivity(
 @Serializable
 data class ProfileBasicInfo(
     val username: String? = null,
-    @SerialName("full_name") val fullName: String? = null,
-    @SerialName("avatar_url") val avatarUrl: String? = null
+    val fullName: String? = null,
+    val avatarUrl: String? = null
 )
 
 @Serializable

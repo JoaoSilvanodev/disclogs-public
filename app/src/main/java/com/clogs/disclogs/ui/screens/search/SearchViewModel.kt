@@ -2,7 +2,6 @@ package com.clogs.disclogs.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil.util.CoilUtils.result
 import com.clogs.disclogs.data.repository.AlbumRepository
 import com.clogs.disclogs.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,7 +60,7 @@ class SearchViewModel @Inject constructor(
             )
         ) {
 
-            // BATE NO SUPABASE
+
             val result = profileRepository.searchUsers(query)
             result.onSuccess { listUser ->
                 _uiState.update { it.copy(users = listUser, isLoading = false) }

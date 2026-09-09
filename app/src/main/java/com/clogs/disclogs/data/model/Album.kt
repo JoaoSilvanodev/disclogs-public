@@ -2,6 +2,7 @@ package com.clogs.disclogs.data.model
 
 import kotlinx.serialization.Serializable
 
+
 @Serializable
 data class Album(
     val id: String = "",
@@ -15,9 +16,11 @@ data class Album(
     val averageRating: Double = 0.0,
     val totalRating: Double = 0.0,
     val userRating: Double = 0.0,
-    val weeklyCount: Int = 0,
-    val totalReviews: Int = 0,
-    val lastReviewedAt: Long = 0,
+
+    val weeklyCount: Int = 0, // Contagem de quantas vezes o álbum foi avaliado nesta semana
+    val currentWeekId: String = "", // ID da semana atual (ano_Wsemana)
+    val totalReviews: Int = 0, // Número total de avaliações
+    val lastReviewedAt: Long = 0L, // Timestamp do último review
 
     val wikiSummary: String? = null,
     val genres: List<String> = emptyList(),
@@ -27,4 +30,4 @@ data class Album(
     val catalogNumber: String? = null,
     val physicalFormat: String? = null,
 
-)
+    )

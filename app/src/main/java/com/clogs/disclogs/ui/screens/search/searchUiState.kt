@@ -9,6 +9,6 @@ data class SearchUiState(
     val users: List<Profiles> = emptyList(),
     val errorMessage: String? = null,
     val searchQuery: String = "",
-    val selectedFilter: String = "Álbum",
+    val selectedFilter: String = "album",
     val recentSearches: List<Album> = emptyList()
 )
